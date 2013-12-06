@@ -45,7 +45,8 @@
         <div class="row"><p class="normalText">The Augmented Reality Farm provides 3D views of predicted and actual crop yield.</p></div>
     </fieldset>
 
-    <a type="button" class="btn" id="aug" class="overbutton" onclick="bridgeit.augmentedReality('_farm','onReturnFromAugmentedReality', {postURL:(window.echoHub + 'echo/')});">Visit the farm ... </a>
+    <a type="button" class="btn" class="overbutton" 
+        onclick="viewFarm();">Visit the farm ... </a>
 
 
     <fieldset >
@@ -55,9 +56,21 @@
     <script type="text/javascript">
 
     function viewFarm()  {
-        var ub="http://host:8080";
-        var ice.arform_0 = "http://host:8080//arfarm/resources/3d/arfarm.xml";
-        var v = "vuforia";
+        var barURL = window.location.toString();
+        var baseURL = barURL.substring(0,
+                barURL.lastIndexOf("/")) + "/";
+
+        var arform = baseURL + "3d/arfarm.xml";
+        var options = {
+            postURL: 'http://api.bridgeit.mobi/echo/',
+            v: 'vuforia'
+        }
+        options['ice.arform_0'] = arform;
+
+alert("options " + JSON.stringify(options));
+
+        bridgeit.augmentedReality(
+                '_farm','onReturnFromAugmentedReality', options );
      }
 
     function onReturnFromAugmentedReality(event)  {
