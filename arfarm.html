@@ -33,25 +33,20 @@
       
    </head>
 
-<body>
-    <div  class="hdr demo" >
-	     <h1><span class="bridge-font-color">BridgeIt</span></h1>
-    <div>
+<body style="font-family:sans-serif">
 
+    <img style="display:block;width:100%; margin-left: auto; margin-right: auto; max-width:400px;padding-bottom:20px;" 
+        src="images/bridgeit-banner.png">
 
-    <h2>Augmented Reality</h2>
+    <div style="padding-top:20px; padding-bottom:20px">
+       <img style="height:40px;vertical-align:middle" src="images/ar-icon.png">
+       <span style="font-size:21px;font-weight:bold;color:#FF855E;">Augmented Reality</span>
+    </div>
 
-    <fieldset class="desc">
-        <div class="row"><p class="normalText">The Augmented Reality Farm provides 3D views of predicted and actual crop yield.</p></div>
-    </fieldset>
+    <div class="row" style="padding-bottom:20px"><p class="normalText" >The Augmented Reality Farm provides 3D views of predicted and actual crop yield.</p></div>
 
-    <a type="button" class="btn" class="overbutton" 
+    <a type="button" class="btn" style="min-height:35px;border-style:solid; border-color:grey;border-width:1px;" 
         onclick="viewFarm();">Visit the farm ... </a>
-
-
-    <fieldset >
-        Selected location: <img style="height:40px;" id="selected" >
-    </fieldset>
 
     <script type="text/javascript">
 
@@ -66,8 +61,6 @@
             v: 'vuforia'
         }
         options['ice.arform_0'] = arform;
-
-alert("options " + JSON.stringify(options));
 
         bridgeit.augmentedReality(
                 '_farm','onReturnFromAugmentedReality', options );
