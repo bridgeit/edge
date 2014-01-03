@@ -170,7 +170,11 @@
         var alpha = atn2(Math.cos(obliq) * Math.sin(lambda), Math.cos(lambda));
         var delta = Math.asin(Math.sin(obliq) * Math.sin(lambda));
 
-        var sunradec = alpha + "," + delta + "," + ",i";
+        console.log( "current sun RA : " + alpha * degs / 15);
+        console.log( "current sun DEC : " + delta * degs);
+
+        //lat,lon coords reversed in this version of BridgeIt
+        var sunradec = delta * degs + "," + alpha * degs / 15 + ",i,,images/sun.png";
         var options = {
             postURL: 'http://api.bridgeit.mobi/echo/',
         }
