@@ -127,7 +127,7 @@
 
         var date = new Date(Date.UTC(1997,7,7,11));
         var h = date.getUTCHours() + (date.getMinutes() / 60);
-        var d = sunDay(date.getFullYear(), date.getMonth() + 1, date.getDate(), h);
+        var d = sunDay(date.getFullYear(), date.getMonth() + 1, date.getDate() + 1, h);
         var lambda = sun(d);
         //Obliquity of the ecliptic
         var obliq = 23.439 * rads - 0.0000004 * rads * d;
@@ -161,7 +161,7 @@
 
         var date = new Date();
         var h = date.getUTCHours() + (date.getMinutes() / 60);
-        var d = sunDay(date.getFullYear(), date.getMonth() + 1, date.getDate(), h);
+        var d = sunDay(date.getFullYear(), date.getMonth() + 1, date.getDate() + 1, h);
         var lambda = sun(d);
         //Obliquity of the ecliptic
         var obliq = 23.439 * rads - 0.0000004 * rads * d;
