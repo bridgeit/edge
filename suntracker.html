@@ -50,6 +50,18 @@
 
     <script type="text/javascript">
 
+    function sign(x)  {
+        if (0 == x)  {
+            return 1;
+        }
+        return (x / Math.abs(x));
+    }
+
+    //signed integer part of x
+    function int(x)  {
+        return sign(x) * Math.floor(Math.abs(x));
+    }
+
 
     //ported from http://www.stargazing.net/kepler/sun.html
 
@@ -58,30 +70,24 @@
     var degs = 180 / pi;
     var rads = pi / 180;
 
-    //return the days to J2000
-    //h is UT in decimal hours
-    // only works between 1901 to 2099 - see Meeus chapter 7
-
-    function sunDay(y, m, d, h)  {
-        return (
-                367 * y 
-                - 7 * Math.floor((y + Math.floor((m + 9) / 12)) / 4) 
-                + Math.floor(275 * m / 9) + d 
-                - 730531.5 + h / 24);
+    //from http://aa.usno.navy.mil/faq/docs/JD_Formula.php
+    //valid for 1801–2099
+    //replaces port from stargazing.net likely problem being
+    //unclear use of integer arithmetic
+    function julianDay(Y, M, D, UT)  {
+        var JD = 367*Y - int((7*(Y+int((M+9)/12)))/4) + int((275*M)/9) + 
+            D + 1721013.5 + UT/24  - 0.5 * sign(100*Y + M-190002.5) + 0.5;
+        return JD;
     }
 
-    //return the true integer part, even for negative numbers
-        function ipart(x)  {
-            if (0 == x)  {
-                return x;
-            }
-            return (x / Math.abs(x)) * Math.floor(Math.abs(x));
-        }
+    function sunDay(y, m, d, h)  {
+        return julianDay(y, m, d, h) - julianDay(2000,1,1,12);
+    }
 
     //return an angle in the range 0 to two pi
         function canon(x)  {
             var b = x / twoPi;
-            var a = twoPi * (b - ipart(b));
+            var a = twoPi * (b - int(b));
             if (a < 0)  {
                 return (twoPi + a);
             }
@@ -127,7 +133,8 @@
 
         var date = new Date(Date.UTC(1997,7,7,11));
         var h = date.getUTCHours() + (date.getMinutes() / 60);
-        var d = sunDay(date.getFullYear(), date.getMonth() + 1, date.getDate() + 1, h);
+        var d = sunDay(date.getFullYear(), date.getMonth() + 1, 
+                date.getDate(), h);
         var lambda = sun(d);
         //Obliquity of the ecliptic
         var obliq = 23.439 * rads - 0.0000004 * rads * d;
@@ -161,7 +168,8 @@
 
         var date = new Date();
         var h = date.getUTCHours() + (date.getMinutes() / 60);
-        var d = sunDay(date.getFullYear(), date.getMonth() + 1, date.getDate() + 1, h);
+        var d = sunDay(date.getFullYear(), date.getMonth() + 1, 
+                date.getDate(), h);
         var lambda = sun(d);
         //Obliquity of the ecliptic
         var obliq = 23.439 * rads - 0.0000004 * rads * d;
