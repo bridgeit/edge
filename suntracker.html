@@ -184,9 +184,9 @@
         //lat,lon coords reversed in this version of BridgeIt
         var sunradec = delta * degs + "," + alpha * degs / 15 + ",i,,images/sun.png";
         var options = {
-            postURL: 'http://api.bridgeit.mobi/echo/',
+            postURL: 'http://api.bridgeit.mobi/echo/blob'
         }
-        options['sol'] = sunradec;
+        options['Sun'] = sunradec;
 
         bridgeit.augmentedReality(
                 '_sun','onReturnFromAugmentedReality', options );
