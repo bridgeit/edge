@@ -112,7 +112,9 @@ output.innerHTML += !event.preview ? "" :
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "http://api.bridgeit.mobi/echo/list/" + labName,false);
         xhr.send();
-        experiments = JSON.parse(xhr.responseText);
+        try {
+            experiments = JSON.parse(xhr.responseText);
+        }
         var experimentSelect = document.getElementById("experimentid");
         //remove all but first title select
         while(experimentSelect.options.length > 1){                
