@@ -3,8 +3,13 @@
  * Copyright 2013 Tom Frost
  */
 
-var crypto = require('crypto');
+/*
+ * Modified for client-side operation
+*/
 
+var phonetic = {};
+
+{
 /**
  * Phonetics that sound best before a vowel.
  * @type {Array}
@@ -220,13 +225,10 @@ function getNextPhonetic(phoneticSet, simpleCap, wordObj, forceSimple) {
  * @returns {number}
  */
 function getNumericHash(data) {
-	var hash = crypto.createHash('md5'),
-		numeric = 0,
-		buf;
-	hash.update(data + '-Phonetic');
-	buf = hash.digest();
+	var hash = md5(data + '-Phonetic');
+    var numeric = 0;
 	for (var i = 0; i <= 12; i += 4)
-		numeric += buf.readUInt32LE(i);
+		numeric += parseInt(hash.substr(i, 4), 16);
 	return numeric;
 }
 
@@ -260,7 +262,7 @@ function postProcess(wordObj) {
  * @param {*} [options] A collection of options to control the word generator.
  * @returns {string} A generated word.
  */
-module.exports.generate = function(options) {
+function generate(options) {
 	options = getOptions(options);
 	var syllables = options.syllables,
 		wordObj = {
@@ -272,4 +274,8 @@ module.exports.generate = function(options) {
 	while (syllables--)
 		addSyllable(wordObj);
 	return postProcess(wordObj);
-};
+}
+
+phonetic.generate = generate;
+
+}

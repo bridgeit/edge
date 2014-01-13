@@ -12,7 +12,11 @@
       <script type="text/javascript" src="http://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
       <!-- bridgeit.js STABLE VERSION 
       <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script -->
-      
+
+
+      <script type="text/javascript" src="md5.min.js"></script>
+      <script type="text/javascript" src="phonetic.js"></script>
+
       <!-- APP ICONS -->
       <link rel="apple-touch-icon" href="images/touch-icon-iphone.png"/>
       <link rel="apple-touch-icon" sizes="76x76" href="images/touch-icon-ipad.png"/>
@@ -38,48 +42,135 @@
     <img style="display:block;width:100%; margin-left: auto; margin-right: auto; max-width:400px;padding-bottom:20px;" 
         src="images/bridgeit-banner.png">
 
-    <div style="padding-top:20px; padding-bottom:20px">
+    <div>
        <i class="fa fa-flask"></i>
        <span style="font-size:21px;font-weight:bold;color:#FF855E;">BridgeIt Lab Bench</span>
     </div>
+    <div>Experiment with different BridgeIt features.  Use the same lab name to share experiments with your devices.</div>
 
-    <div class="row" style="padding-bottom:20px"><p class="normalText" >Experiment with different BridgeIt features.</p></div>
+    <div style="padding-top:20px;">
+    </div>
 
-    <div style="padding-top:20px; padding-bottom:20px">
+    <span style="font-size:20px;font-weight:bold;color:#FF855E;">Lab: </span>
+        <input type="text" id="labname" onblur="labNameBlur(this)"
+        autocorrect="off" autocapitalize="off" size="12">
+    <select id="experimentid" 
+            onchange="pickExperiment(this)">
+        <option value="">Choose Experiment</option>
+    </select>
+
+    <div style="padding-top:20px">
        <span style="font-size:21px;font-weight:bold;color:#FF855E;">Click Script</span>
     </div>
 
     <textarea id="onclickScript" rows="3" style="width:100%">
-        bridgeit.camera('_cam', 'labCallback', {postURL:"http://api.bridgeit.mobi/echo/blob" } );
-    </textarea>
+bridgeit.camera('_cam', 'labCallback', 
+    {postURL:"http://api.bridgeit.mobi/echo/blob" } 
+);</textarea>
 
-    <div style="padding-top:20px; padding-bottom:20px">
+    <div style="padding-top:20px">
        <span style="font-size:21px;font-weight:bold;color:#FF855E;">Callback Script</span>
     </div>
 
-    <textarea id="callbackScript" rows="6" style="width:100%">
-        var text = event.value;
-        if (event.preview)  {
-            document.getElementById("output").innerHTML = "<img src='" +
-            event.preview + "'>"; 
-        }
-        if (event.response)  {
-        }
-    </textarea>
+    <textarea id="callbackScript" rows="4" style="width:100%">
+output.innerHTML += !event.value ? "" : 
+        event.value;
+output.innerHTML += !event.preview ? "" : 
+        "<img src='" + event.preview + "'>";</textarea>
+
+    <div style="padding-top:20px;">
+    </div>
+
+    <a type="button" class="btn" style="min-height:35px;border-style:solid; border-color:grey;border-width:1px;" 
+        onclick="saveExperiment();">Save Experiment ... </a>
+
+    <div style="padding-top:20px;">
+    </div>
 
     <a type="button" class="btn" style="min-height:35px;border-style:solid; border-color:grey;border-width:1px;" 
         onclick="runExperiment();">Run Experiment ... </a>
 
+    <div style="padding-top:20px;">
+    </div>
+
     <script type="text/javascript">
 
+    var experiments = [ ];
+
+    var labName = phonetic.generate({capFirst:0});
+    if (localStorage)  {
+        var oldlabName = localStorage.getItem("bridgeitlab.labname");
+        if (oldlabName)  {
+            labName = oldlabName;
+            updateExperiments();
+        }
+        localStorage.setItem("bridgeitlab.labname", labName);
+    }
+    document.getElementById("labname").value = labName;
+
+    function updateExperiments()  {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://api.bridgeit.mobi/echo/list/" + labName,false);
+        xhr.send();
+        experiments = JSON.parse(xhr.responseText);
+        var experimentSelect = document.getElementById("experimentid");
+        //remove all but first title select
+        while(experimentSelect.options.length > 1){                
+            experimentSelect.remove(1);
+        }
+        for (i = 0; i < experiments.length; i++)  {
+            var option = document.createElement("option");
+            option.text = "Experiment " + i;
+            option.value = i;
+            experimentSelect.add(option);
+        }
+    }
+
+    function pickExperiment(select)  {
+        var picked = select.selectedIndex - 1;  
+        document.getElementById("onclickScript").value = 
+                experiments[picked].clickScript;
+        document.getElementById("callbackScript").value =
+            experiments[picked].callbackScript;
+    }
+
+    function labNameBlur(field)  {
+        labName = field.value;
+        console.log("fetch experiments for " + labName);
+        if (localStorage)  {
+            localStorage.setItem("bridgeitlab.labname", labName);
+        }
+        updateExperiments();
+    }
+
+    function saveExperiment()  {
+        labName = document.getElementById("labname").value;
+        xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://api.bridgeit.mobi/echo/list/" + labName,false);
+        xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+        var experiment = {
+            clickScript: document.getElementById("onclickScript").value,
+            callbackScript: document.getElementById("callbackScript").value
+        }
+        xhr.send(JSON.stringify(experiment));
+     }
+
     function runExperiment()  {
-        eval(document.getElementById("onclickScript").value);
+        try {
+            eval(document.getElementById("onclickScript").value);
+        } catch (e)  {
+            alert(e);
+        }
      }
 
     function labCallback(event)  {
-        window.labCallbackEvent = event;
-        eval("{var event = labCallbackEvent;" +
-            document.getElementById("callbackScript").value + "}");
+        try {
+            window.labCallbackEvent = event;
+            eval("{var event = labCallbackEvent;" +
+                document.getElementById("callbackScript").value + "}");
+        } catch (e)  {
+            alert(e);
+        }
     }
 
     bridgeit.launchFailed = function(){
