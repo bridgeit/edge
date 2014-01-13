@@ -114,7 +114,7 @@ output.innerHTML += !event.preview ? "" :
         xhr.send();
         try {
             experiments = JSON.parse(xhr.responseText);
-        }
+        } catch (e) { };
         var experimentSelect = document.getElementById("experimentid");
         //remove all but first title select
         while(experimentSelect.options.length > 1){                
