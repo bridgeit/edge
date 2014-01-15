@@ -3,10 +3,17 @@ JavaScript programming, graphics, and DHTML
 copyright (c) Adrian R. Ashford, March 2004.
 
 JavaScript(s) used with permission by Astronomy Now.
+
+From http://astronomynow.com/javascript/solar_system.js
+
+Modified to store planetary positions in orrery object.
 */
 
 function setup()
 {
+if (!window.orrery)  {
+    window.orrery = {};
+}
 var nowdate = new Date();
 var utc_day = nowdate.getUTCDate();
 var utc_month = nowdate.getUTCMonth() + 1;
@@ -22,8 +29,8 @@ if (utc_mins > 59) utc_mins = 59;
 if (utc_hours < 10) utc_hours = "0" + utc_hours;
 if (utc_month < 10) utc_month = "0" + utc_month;
 if (utc_day < 10) utc_day = "0" + utc_day;
-document.planets.date_txt.value = utc_day + "/" + utc_month + "/" + utc_year;
-document.planets.ut_h_m.value = utc_hours + ":" + utc_mins;
+window.orrery.date_txt = utc_day + "/" + utc_month + "/" + utc_year;
+window.orrery.ut_h_m = utc_hours + ":" + utc_mins;
 planets();
 }
 
@@ -77,7 +84,7 @@ return Math.floor((num + 0.005) * 100) / 100;
 
 function isValidDate(dateStr)
 { 
-if (IsValidTime(document.planets.ut_h_m.value) == true)
+if (IsValidTime(window.orrery.ut_h_m) == true)
 {
 var datePat = /^(\d{1,2})(\/|-)(\d{1,2})\2(\d{4})$/;
 var matchArray = dateStr.match(datePat);
@@ -114,8 +121,8 @@ return false;
 } 
 if (month < 10 && month.length == 1) month = "0" + month;
 if (day < 10 && day.length == 1) day = "0" + day;
-document.planets.date_txt.value = day + "/" + month + "/" + year;
-var dt_str = document.planets.date_txt.value;
+window.orrery.date_txt = day + "/" + month + "/" + year;
+var dt_str = window.orrery.date_txt;
 if ((dt_str.substring(2,3) != "/") || (dt_str.substring(5,6) != "/"))
 {
 alert ("Date is not in a valid format.");
@@ -153,8 +160,8 @@ return false;
 }
 if (hour < 10 && hour.length == 1) hour = "0" + hour;
 if (minute < 10 && minute.length == 1) minute = "0" + minute;
-document.planets.ut_h_m.value = hour + ":" + minute;
-var tm_str = document.planets.ut_h_m.value;
+window.orrery.ut_h_m = hour + ":" + minute;
+var tm_str = window.orrery.ut_h_m;
 if ((tm_str.substring(2,3) != ":") && (dt_str.length != 5))
 {
 alert ("Time is not in a valid format.");
@@ -165,7 +172,7 @@ return true;
 
 function time_change(tmp)
 {
-if (isValidDate(document.planets.date_txt.value) == true)
+if (isValidDate(window.orrery.date_txt) == true)
 {
 var jd_temp, zz, ff, alpha, aa, bb, cc, dd, ee;
 var calendar_day, calendar_month, calendar_year;
@@ -175,7 +182,7 @@ var tm_as_str, ut_hrs, ut_mns, part_day;
 
 var jd = julian_date();
 
-tm_as_str = document.planets.ut_h_m.value;
+tm_as_str = window.orrery.ut_h_m;
 ut_hrs = eval(tm_as_str.substring(0,2));
 ut_mns = eval(tm_as_str.substring(3,5));
 part_day = ut_hrs / 24.0 + ut_mns / 1440.0;
@@ -210,8 +217,8 @@ if (int_day < 10) int_day = "0" + int_day;
 if (hours < 10) hours = "0" + floor(hours);
 if (minutes < 10) minutes = "0" + minutes;
 }
-document.planets.date_txt.value = int_day + "/" + calendar_month + "/" + calendar_year;
-document.planets.ut_h_m.value = hours + ":" + minutes;
+window.orrery.date_txt = int_day + "/" + calendar_month + "/" + calendar_year;
+window.orrery.ut_h_m = hours + ":" + minutes;
 planets();
 return true;
 }
@@ -226,7 +233,7 @@ function julian_date()
 var dt_as_str, mm, dd, yy;
 var yyy, mmm, a, b;
 
-dt_as_str = document.planets.date_txt.value;
+dt_as_str = window.orrery.date_txt;
 
 dd = eval(dt_as_str.substring(0,2));
 mm = eval(dt_as_str.substring(3,5));
@@ -281,6 +288,7 @@ var ang_at_1au = new Array(6.74,16.92,0.0,9.36,196.74,165.6,65.8,62.2,8.2);
 
 var planet_dec = new Array(9);
 var planet_ra = new Array(9); 
+var planet_rah = new Array(9); 
 var planet_dist = new Array(9);
 var planet_phase = new Array(9);
 var planet_size = new Array(9);
@@ -296,14 +304,14 @@ var l_m, M_m, N_m, Ev, Ae, A3, A4, lambda_moon, beta_moon, age;
 
 var tm_as_str, ut_hrs, ut_mns, part_day, d_of_w, dow_str;
 
-tm_as_str = document.planets.ut_h_m.value;
+tm_as_str = window.orrery.ut_h_m;
 ut_hrs = eval(tm_as_str.substring(0,2));
 ut_mns = eval(tm_as_str.substring(3,5));
 part_day = ut_hrs / 24.0 + ut_mns / 1440.0;
 
 jd = julian_date() + part_day;
 
-document.planets.julian_date.value = jd;
+window.orrery.julian_date = jd;
 
 d_of_w = floor((jd - part_day + 1.5) % 7);
 
@@ -315,7 +323,7 @@ if (d_of_w == 4) dow_str = "Thursday";
 if (d_of_w == 5) dow_str = "Friday";
 if (d_of_w == 6) dow_str = "Saturday";
 
-document.planets.day_txt.value = dow_str;
+window.orrery.day_txt = dow_str;
 
 D = jd + 1.1 / 1440 - 2453240.5;
 
@@ -330,8 +338,8 @@ t0 = (julian_date() - 2415020.0) / 36525;
 gt = 0.276919398 + 100.0021359 * t0 + 1.075E-6 * pow(t0,2);
 st = proper_ang_rad((gt - floor(gt)) * 2 * PI + (ut_hrs + ut_mns / 60) * 0.26251617);
 
-lat = document.planets.latitude.value / RAD;
-lng = document.planets.longitude.value / RAD;
+lat = window.orrery.latitude / RAD;
+lng = window.orrery.longitude / RAD;
 height = 10.0;
 
 obl = 23.4387 / RAD;
@@ -352,6 +360,7 @@ if (sin(hour_ang) >= 0) az = 2 * PI - az;
 
 planet_dec[8] = "";
 planet_ra[8] = "";
+planet_rah[8] = "";
 planet_dist[8] = "";
 planet_size[8] = "";
 planet_phase[8] = " ---";
@@ -363,22 +372,7 @@ ra = ra * RAD / 15;
 alt = alt * RAD;
 az = az * RAD;
 
-if (az > 348.75 || az <= 11.25) planet_az[8] = "..N..";
-if (az > 11.25 && az <= 33.75) planet_az[8] = "N.N.E";
-if (az > 33.75 && az <= 56.25) planet_az[8] = "..N.E";
-if (az > 56.25 && az <= 78.75) planet_az[8] = "E.N.E";
-if (az > 78.75 && az <= 101.25) planet_az[8] = "..E..";
-if (az > 101.25 && az <= 123.75) planet_az[8] = "E.S.E";
-if (az > 123.75 && az <= 146.25) planet_az[8] = "..S.E";
-if (az > 146.25 && az <= 168.75) planet_az[8] = "S.S.E";
-if (az > 168.75 && az <= 191.25) planet_az[8] = "..S..";
-if (az > 191.25 && az <= 213.75) planet_az[8] = "S.S.W";
-if (az > 213.75 && az <= 236.25) planet_az[8] = "..S.W";
-if (az > 236.25 && az <= 258.75) planet_az[8] = "W.S.W";
-if (az > 258.75 && az <= 281.25) planet_az[8] = "..W..";
-if (az > 281.25 && az <= 303.75) planet_az[8] = "W.N.W";
-if (az > 303.75 && az <= 326.25) planet_az[8] = "..N.W";
-if (az > 326.25 && az <= 348.75) planet_az[8] = "N.N.W";
+planet_az[8] = az;
 
 if (alt >= 0)
 {
@@ -401,6 +395,8 @@ planet_dec[8] += "+";
 if (x < 10) planet_dec[8] += "0";
 planet_dec[8] += x;
 
+planet_ra[8] = ra;
+
 x = floor(ra);
 y = floor((ra - x) * 60 + 0.5);
 if (y == 60)
@@ -408,10 +404,10 @@ if (y == 60)
 x += 1;
 y = 0;
 }
-if (x < 10) planet_ra[8] += "0";
-planet_ra[8] += x + "h";
-if (y < 10) planet_ra[8] += "0";
-planet_ra[8] += y + "m";
+if (x < 10) planet_rah[8] += "0";
+planet_rah[8] += x + "h";
+if (y < 10) planet_rah[8] += "0";
+planet_rah[8] += y + "m";
 
 dist = round_100(dist);
 if (dist < 10)
@@ -496,6 +492,7 @@ if (sin(hour_ang) >= 0) az = 2 * PI - az;
 
 planet_dec[9] = "";
 planet_ra[9] = "";
+planet_rah[9] = "";
 planet_dist[9] = "";
 planet_phase[9] = "";
 planet_size[9] = "";
@@ -507,22 +504,7 @@ ra = ra * RAD / 15;
 alt = alt * RAD;
 az = az * RAD;
 
-if (az > 348.75 || az <= 11.25) planet_az[9] = "..N..";
-if (az > 11.25 && az <= 33.75) planet_az[9] = "N.N.E";
-if (az > 33.75 && az <= 56.25) planet_az[9] = "..N.E";
-if (az > 56.25 && az <= 78.75) planet_az[9] = "E.N.E";
-if (az > 78.75 && az <= 101.25) planet_az[9] = "..E..";
-if (az > 101.25 && az <= 123.75) planet_az[9] = "E.S.E";
-if (az > 123.75 && az <= 146.25) planet_az[9] = "..S.E";
-if (az > 146.25 && az <= 168.75) planet_az[9] = "S.S.E";
-if (az > 168.75 && az <= 191.25) planet_az[9] = "..S..";
-if (az > 191.25 && az <= 213.75) planet_az[9] = "S.S.W";
-if (az > 213.75 && az <= 236.25) planet_az[9] = "..S.W";
-if (az > 236.25 && az <= 258.75) planet_az[9] = "W.S.W";
-if (az > 258.75 && az <= 281.25) planet_az[9] = "..W..";
-if (az > 281.25 && az <= 303.75) planet_az[9] = "W.N.W";
-if (az > 303.75 && az <= 326.25) planet_az[9] = "..N.W";
-if (az > 326.25 && az <= 348.75) planet_az[9] = "N.N.W";
+planet_az[9] = az;
 
 if (alt >= 0)
 {
@@ -545,6 +527,8 @@ planet_dec[9] += "+";
 if (x < 10) planet_dec[9] += "0";
 planet_dec[9] += x;
 
+planet_ra[9] = ra;
+
 x = floor(ra);
 y = floor((ra - x) * 60 + 0.5);
 if (y == 60)
@@ -552,10 +536,10 @@ if (y == 60)
 x += 1;
 y = 0;
 }
-if (x < 10) planet_ra[9] += "0";
-planet_ra[9] += x + "h";
-if (y < 10) planet_ra[9] += "0";
-planet_ra[9] += y + "m";
+if (x < 10) planet_rah[9] += "0";
+planet_rah[9] += x + "h";
+if (y < 10) planet_rah[9] += "0";
+planet_rah[9] += y + "m";
 
 if (age < 10)
 planet_dist[9] += "0";
@@ -634,6 +618,7 @@ if (sin(hour_ang) >= 0) az = 2 * PI - az;
 
 planet_dec[i] = "";
 planet_ra[i] = "";
+planet_rah[i] = "";
 planet_dist[i] = "";
 planet_size[i] = "";
 planet_phase[i] = "";
@@ -645,22 +630,7 @@ ra = ra * RAD / 15;
 alt = alt * RAD;
 az = az * RAD;
 
-if (az > 348.75 || az <= 11.25) planet_az[i] = "..N..";
-if (az > 11.25 && az <= 33.75) planet_az[i] = "N.N.E";
-if (az > 33.75 && az <= 56.25) planet_az[i] = "..N.E";
-if (az > 56.25 && az <= 78.75) planet_az[i] = "E.N.E";
-if (az > 78.75 && az <= 101.25) planet_az[i] = "..E..";
-if (az > 101.25 && az <= 123.75) planet_az[i] = "E.S.E";
-if (az > 123.75 && az <= 146.25) planet_az[i] = "..S.E";
-if (az > 146.25 && az <= 168.75) planet_az[i] = "S.S.E";
-if (az > 168.75 && az <= 191.25) planet_az[i] = "..S..";
-if (az > 191.25 && az <= 213.75) planet_az[i] = "S.S.W";
-if (az > 213.75 && az <= 236.25) planet_az[i] = "..S.W";
-if (az > 236.25 && az <= 258.75) planet_az[i] = "W.S.W";
-if (az > 258.75 && az <= 281.25) planet_az[i] = "..W..";
-if (az > 281.25 && az <= 303.75) planet_az[i] = "W.N.W";
-if (az > 303.75 && az <= 326.25) planet_az[i] = "..N.W";
-if (az > 326.25 && az <= 348.75) planet_az[i] = "N.N.W";
+planet_az[i] = az;
 
 if (alt >= 0)
 {
@@ -683,6 +653,8 @@ planet_dec[i] += "+";
 if (x < 10) planet_dec[i] += "0";
 planet_dec[i] += x;
 
+planet_ra[i] = ra;
+
 x = floor(ra);
 y = floor((ra - x) * 60 + 0.5);
 if (y == 60)
@@ -690,10 +662,10 @@ if (y == 60)
 x += 1;
 y = 0;
 }
-if (x < 10) planet_ra[i] += "0";
-planet_ra[i] += x + "h";
-if (y < 10) planet_ra[i] += "0";
-planet_ra[i] += y + "m";
+if (x < 10) planet_rah[i] += "0";
+planet_rah[i] += x + "h";
+if (y < 10) planet_rah[i] += "0";
+planet_rah[i] += y + "m";
 
 dist = round_100(dist);
 if (dist < 10)
@@ -726,85 +698,95 @@ planet_alt[i] += x;
 
 }
 
-document.planets.ra0.value = planet_ra[0];
-document.planets.dec0.value = planet_dec[0];
-document.planets.dist0.value = planet_dist[0];
-document.planets.size0.value = planet_size[0];
-document.planets.phase0.value = planet_phase[0];
-document.planets.alt0.value = planet_alt[0];
-document.planets.az0.value = planet_az[0];
+window.orrery.ra0 = planet_ra[0];
+window.orrery.rah0 = planet_rah[0];
+window.orrery.dec0 = planet_dec[0];
+window.orrery.dist0 = planet_dist[0];
+window.orrery.size0 = planet_size[0];
+window.orrery.phase0 = planet_phase[0];
+window.orrery.alt0 = planet_alt[0];
+window.orrery.az0 = planet_az[0];
 
-document.planets.ra1.value = planet_ra[1];
-document.planets.dec1.value = planet_dec[1];
-document.planets.dist1.value = planet_dist[1];
-document.planets.size1.value = planet_size[1];
-document.planets.phase1.value = planet_phase[1];
-document.planets.alt1.value = planet_alt[1];
-document.planets.az1.value = planet_az[1];
+window.orrery.ra1 = planet_ra[1];
+window.orrery.rah1 = planet_rah[1];
+window.orrery.dec1 = planet_dec[1];
+window.orrery.dist1 = planet_dist[1];
+window.orrery.size1 = planet_size[1];
+window.orrery.phase1 = planet_phase[1];
+window.orrery.alt1 = planet_alt[1];
+window.orrery.az1 = planet_az[1];
 
-document.planets.ra2.value = planet_ra[2];
-document.planets.dec2.value = planet_dec[2];
-document.planets.dist2.value = planet_dist[2];
-document.planets.size2.value = planet_size[2];
-document.planets.phase2.value = planet_phase[2];
-document.planets.alt2.value = planet_alt[2];
-document.planets.az2.value = planet_az[2];
+window.orrery.ra2 = planet_ra[2];
+window.orrery.rah2 = planet_rah[2];
+window.orrery.dec2 = planet_dec[2];
+window.orrery.dist2 = planet_dist[2];
+window.orrery.size2 = planet_size[2];
+window.orrery.phase2 = planet_phase[2];
+window.orrery.alt2 = planet_alt[2];
+window.orrery.az2 = planet_az[2];
 
-document.planets.ra3.value = planet_ra[3];
-document.planets.dec3.value = planet_dec[3];
-document.planets.dist3.value = planet_dist[3];
-document.planets.size3.value = planet_size[3];
-document.planets.phase3.value = planet_phase[3];
-document.planets.alt3.value = planet_alt[3];
-document.planets.az3.value = planet_az[3];
+window.orrery.ra3 = planet_ra[3];
+window.orrery.rah3 = planet_rah[3];
+window.orrery.dec3 = planet_dec[3];
+window.orrery.dist3 = planet_dist[3];
+window.orrery.size3 = planet_size[3];
+window.orrery.phase3 = planet_phase[3];
+window.orrery.alt3 = planet_alt[3];
+window.orrery.az3 = planet_az[3];
 
-document.planets.ra4.value = planet_ra[4];
-document.planets.dec4.value = planet_dec[4];
-document.planets.dist4.value = planet_dist[4];
-document.planets.size4.value = planet_size[4];
-document.planets.phase4.value = planet_phase[4];
-document.planets.alt4.value = planet_alt[4];
-document.planets.az4.value = planet_az[4];
+window.orrery.ra4 = planet_ra[4];
+window.orrery.rah4 = planet_rah[4];
+window.orrery.dec4 = planet_dec[4];
+window.orrery.dist4 = planet_dist[4];
+window.orrery.size4 = planet_size[4];
+window.orrery.phase4 = planet_phase[4];
+window.orrery.alt4 = planet_alt[4];
+window.orrery.az4 = planet_az[4];
 
-document.planets.ra5.value = planet_ra[5];
-document.planets.dec5.value = planet_dec[5];
-document.planets.dist5.value = planet_dist[5];
-document.planets.size5.value = planet_size[5];
-document.planets.phase5.value = planet_phase[5];
-document.planets.alt5.value = planet_alt[5];
-document.planets.az5.value = planet_az[5];
+window.orrery.ra5 = planet_ra[5];
+window.orrery.rah5 = planet_rah[5];
+window.orrery.dec5 = planet_dec[5];
+window.orrery.dist5 = planet_dist[5];
+window.orrery.size5 = planet_size[5];
+window.orrery.phase5 = planet_phase[5];
+window.orrery.alt5 = planet_alt[5];
+window.orrery.az5 = planet_az[5];
 
-document.planets.ra6.value = planet_ra[6];
-document.planets.dec6.value = planet_dec[6];
-document.planets.dist6.value = planet_dist[6];
-document.planets.size6.value = planet_size[6];
-document.planets.phase6.value = planet_phase[6];
-document.planets.alt6.value = planet_alt[6];
-document.planets.az6.value = planet_az[6];
+window.orrery.ra6 = planet_ra[6];
+window.orrery.rah6 = planet_rah[6];
+window.orrery.dec6 = planet_dec[6];
+window.orrery.dist6 = planet_dist[6];
+window.orrery.size6 = planet_size[6];
+window.orrery.phase6 = planet_phase[6];
+window.orrery.alt6 = planet_alt[6];
+window.orrery.az6 = planet_az[6];
 
-document.planets.ra7.value = planet_ra[7];
-document.planets.dec7.value = planet_dec[7];
-document.planets.dist7.value = planet_dist[7];
-document.planets.size7.value = planet_size[7];
-document.planets.phase7.value = planet_phase[7];
-document.planets.alt7.value = planet_alt[7];
-document.planets.az7.value = planet_az[7];
+window.orrery.ra7 = planet_ra[7];
+window.orrery.rah7 = planet_rah[7];
+window.orrery.dec7 = planet_dec[7];
+window.orrery.dist7 = planet_dist[7];
+window.orrery.size7 = planet_size[7];
+window.orrery.phase7 = planet_phase[7];
+window.orrery.alt7 = planet_alt[7];
+window.orrery.az7 = planet_az[7];
 
-document.planets.ra8.value = planet_ra[8];
-document.planets.dec8.value = planet_dec[8];
-document.planets.dist8.value = planet_dist[8];
-document.planets.size8.value = planet_size[8];
-document.planets.phase8.value = planet_phase[8];
-document.planets.alt8.value = planet_alt[8];
-document.planets.az8.value = planet_az[8];
+window.orrery.ra8 = planet_ra[8];
+window.orrery.rah8 = planet_rah[8];
+window.orrery.dec8 = planet_dec[8];
+window.orrery.dist8 = planet_dist[8];
+window.orrery.size8 = planet_size[8];
+window.orrery.phase8 = planet_phase[8];
+window.orrery.alt8 = planet_alt[8];
+window.orrery.az8 = planet_az[8];
 
-document.planets.ra9.value = planet_ra[9];
-document.planets.dec9.value = planet_dec[9];
-document.planets.dist9.value = planet_dist[9];
-document.planets.size9.value = planet_size[9];
-document.planets.phase9.value = planet_phase[9];
-document.planets.alt9.value = planet_alt[9];
-document.planets.az9.value = planet_az[9];
+window.orrery.ra9 = planet_ra[9];
+window.orrery.rah9 = planet_rah[9];
+window.orrery.dec9 = planet_dec[9];
+window.orrery.dist9 = planet_dist[9];
+window.orrery.size9 = planet_size[9];
+window.orrery.phase9 = planet_phase[9];
+window.orrery.alt9 = planet_alt[9];
+window.orrery.az9 = planet_az[9];
 
 }
 }

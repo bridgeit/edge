@@ -52,18 +52,57 @@
 
     <script type="text/javascript">
 
+    //you're probably not here but this
+    //provides some default output for the
+    //moon position
+    window.orrery = {
+        latitude: 0,
+        longitude: 0
+    }
+    navigator.geolocation.getCurrentPosition(setupWithPosition);
+
+
+    setup();
+    console.log(window.orrery);
+
+    function setupWithPosition(position)  {
+        window.orrery.latitude = position.coords.latitude;
+        window.orrery.longitude = position.coords.longitude; 
+        setup();
+        console.log(window.orrery);
+    }
 
     function viewSystem()  {
 
+        var ory = window.orrery;
+
         //lat,lon coords reversed in this version of BridgeIt
-        var sunradec = delta * degs + "," + alpha * degs / 15 + ",i,,images/sun.png";
+        var mercuryradec = ory.dec0 + "," + ory.ra0 + ",i,,images/mercury.png";
+        var venusradec = ory.dec1 + "," + ory.ra1 + ",i,,images/venus.png";
+        var marsradec = ory.dec2 + "," + ory.ra2 + ",i,,images/mars.png";
+        var jupiterradec = ory.dec3 + "," + ory.ra3 + ",i,,images/jupiter.png";
+        var saturnradec = ory.dec4 + "," + ory.ra4 + ",i,,images/saturn.png";
+        var uranusradec = ory.dec5 + "," + ory.ra5 + ",i,,images/uranus.png";
+        var neptuneradec = ory.dec6 + "," + ory.ra6 + ",i,,images/neptune.png";
+        var plutoradec = ory.dec7 + "," + ory.ra7 + ",i,,images/pluto.png";
+        var sunradec = ory.dec8 + "," + ory.ra8 + ",i,,images/sun.png";
+        var moonradec = ory.dec9 + "," + ory.ra9 + ",i,,images/moon.png";
         var options = {
             postURL: 'http://api.bridgeit.mobi/echo/blob'
         }
+        options['Mercury'] = mercuryradec;
+        options['Venus'] = venusradec;
+        options['Mars'] = marsradec;
+        options['Jupiter'] = jupiterradec;
+        options['Saturn'] = saturnradec;
+        options['Uranus'] = uranusradec;
+        options['Neptune'] = neptuneradec;
+        options['Pluto'] = plutoradec;
         options['Sun'] = sunradec;
+        options['Moon'] = moonradec;
 
         bridgeit.augmentedReality(
-                '_sun','onReturnFromAugmentedReality', options );
+                '_solar','onReturnFromAugmentedReality', options );
      }
 
     function onReturnFromAugmentedReality(event)  {
