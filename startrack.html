@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>BridgeIt AR Sun Tracker </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+      <link rel="icon" type="image/png" href="favicon.png"/>
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      
+      <link rel="stylesheet" href="http://bridgeit.github.io/demo-jqm/css/mobile.css" type="text/css" />
+
+      <script type="text/javascript" src="solar_system.js"></script>
+
+      <!-- bridgeit.js UNSTABLE VERSION -->
+      <script type="text/javascript" src="http://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
+      <!-- bridgeit.js STABLE VERSION 
+      <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script -->
+      
+      <!-- APP ICONS -->
+      <link rel="apple-touch-icon" href="images/touch-icon-iphone.png"/>
+      <link rel="apple-touch-icon" sizes="76x76" href="images/touch-icon-ipad.png"/>
+      <link rel="apple-touch-icon" sizes="120x120" href="images/touch-icon-iphone-retina.png"/>
+      <link rel="apple-touch-icon" sizes="152x152" href="images/touch-icon-ipad-retina.png"/>
+      <link rel="apple-touch-startup-image" href="images/touch-startup-image.png"/>
+
+      <script>
+         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+         ga('create', 'UA-45568600-1', 'bridgeit.mobi');
+         ga('send', 'pageview');
+
+      </script>
+      
+   </head>
+
+<body style="font-family:sans-serif">
+
+    <img style="display:block;width:100%; margin-left: auto; margin-right: auto; max-width:400px;padding-bottom:20px;" 
+        src="images/bridgeit-banner.png">
+
+    <div style="padding-top:20px; padding-bottom:20px">
+       <img style="height:40px;vertical-align:middle" src="images/ar-icon.png">
+       <span style="font-size:21px;font-weight:bold;color:#FF855E;">Sun Tracker</span>
+    </div>
+
+    <div class="row" style="padding-bottom:20px"><p class="normalText" >The Augmented Reality Sun Tracker shows the current position of the Sun. <b><i>Do not stare directly at the Sun!</i></b></p></div>
+
+    <a type="button" class="btn" style="min-height:35px;border-style:solid; border-color:grey;border-width:1px;" 
+        onclick="viewSystem();">Track the Solar System ... </a>
+
+    <script type="text/javascript">
+
+
+    function viewSystem()  {
+
+        //lat,lon coords reversed in this version of BridgeIt
+        var sunradec = delta * degs + "," + alpha * degs / 15 + ",i,,images/sun.png";
+        var options = {
+            postURL: 'http://api.bridgeit.mobi/echo/blob'
+        }
+        options['Sun'] = sunradec;
+
+        bridgeit.augmentedReality(
+                '_sun','onReturnFromAugmentedReality', options );
+     }
+
+    function onReturnFromAugmentedReality(event)  {
+        var text = event.value;
+        if (event.response)  {
+            var len = "Aug".length;
+            var responseLoc = "" + JSON.parse(event.response)["_loc"][0];
+            console.log("AR selected " + responseLoc);
+            document.getElementById("selected")
+                    .setAttribute("src",
+                    locations[responseLoc].split(",")[4]);
+        }
+    }
+
+    bridgeit.launchFailed = function(){
+        document.getElementById('appStoreLink').href = bridgeit.appStoreURL();
+        var popup = document.getElementById('getBridgeItPopup');
+        popup.style.opacity = 0.95;
+        popup.style.display = 'block';
+        var vwidth = document.body.clientWidth;
+    //center popup with 30px padding of body
+    //popup.style.marginLeft = '' + ((vwidth*0.4)/2)-30 + 'px';
+    }
+
+    function closeGetBridgeItPopup(){
+        var popup = document.getElementById('getBridgeItPopup');
+        popup.style.opacity = 0;
+        popup.style.display = 'none';
+        return true;
+    }
+
+    </script>
+
+    <div id="getBridgeItPopup" style="opacity: 0;display:none;" class="ui-body-c">
+        <a id="closeGetBridgePopup" onclick="closeGetBridgeItPopup();"><i class="icon-remove-sign"></i></a>
+        <p>Missing BridgeIt native features..would you like to download the BridgeIt utility app now?</p>
+        <a id="appStoreLink" href="http://www.icesoft.org/projects/ICEmobile/containers.jsf"
+            class="whiteButton bridgeItBtn" onclick="return closeGetBridgeItPopup();" target="_blank">Download the utility app now</a>
+    </div>
+
+</body>
+</html>
+
