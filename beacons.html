@@ -4,6 +4,7 @@
       <title>BridgeIt iBeacons</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
       <link rel="icon" type="image/png" href="favicon.png"/>
+      <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
       <meta name="apple-mobile-web-app-capable" content="yes" />
       
       <link rel="stylesheet" href="http://bridgeit.github.io/demo-jqm/css/mobile.css" type="text/css" />
@@ -39,8 +40,8 @@
         src="images/bridgeit-banner.png">
 
     <div style="padding-top:20px; padding-bottom:20px">
-       <img style="height:40px;vertical-align:middle" src="images/ar-icon.png">
-       <span style="font-size:21px;font-weight:bold;color:#FF855E;">iBeacon Detection</span>
+       <i class="fa fa-location-arrow"></i>
+       <span style="font-size:21px;font-weight:bold;color:#FF855E;">iBeacon Scanner</span>
     </div>
 
     <div class="row" style="padding-bottom:20px"><p class="normalText" >The iBeacon scanner allows you to detect nearby iBeacons.</p></div>
@@ -48,6 +49,8 @@
     <a type="button" class="btn" style="min-height:35px;border-style:solid; border-color:grey;border-width:1px;" 
         onclick="scanBeacons();">Scan for iBeacons ... </a>
 
+    <div style="padding-top:20px;" id="nearby">
+    </div>
     <script type="text/javascript">
 
     function scanBeacons()  {
@@ -61,8 +64,16 @@
      }
 
     function beaconFound(event)  {
-        var text = event.value;
-        alert(JSON.stringify(event));
+        var beacons = JSON.parse(event.value);
+        var nearby = document.getElementById("nearby");
+        nearby.innerHTML = "";
+        for (var i = 0; i < beacons.length; i++)  {
+            nearby.innerHTML += "<div style='font-size:10px;font-weight:bold;color:#FF855E;'>" + 
+                    beacons[i].uuid + "</div>";
+            nearby.innerHTML += "<div>Major: " + beacons[i].major + 
+                    " Minor: " + beacons[i].minor + " Range: " + 
+                    beacons[i].acc + "m</div>";
+        }
     }
 
     bridgeit.launchFailed = function(){
