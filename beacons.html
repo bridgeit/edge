@@ -74,13 +74,14 @@
         nearby.innerHTML = "";
         for (var i = 0; i < beacons.length; i++)  {
             nearby.innerHTML += 
-                "<span style='font-weight:bold;color:#FF855E;'>" + 
-                    beacons[i].name + " </span>";
-            nearby.innerHTML += "<span style='font-size:10px;'>" + 
-                    beacons[i].uuid + "</span><br>";
-            nearby.innerHTML += "<div>Major: " + beacons[i].major + 
-                    " Minor: " + beacons[i].minor + " Range: " + 
-                    beacons[i].acc + "m</div>";
+                "<div style='font-weight:bold;color:#FF855E;'>" + 
+                    beacons[i].name + " </div>";
+            nearby.innerHTML += "<div style='font-size:10px;'>" + 
+                    beacons[i].uuid + "</div>";
+            nearby.innerHTML += "<div>" + beacons[i].proximity + 
+                    " Major: " + beacons[i].major + 
+                    " Minor: " + beacons[i].minor + " Accuracy: " + 
+                    beacons[i].accuracy + "m</div>";
         }
     }
 
