@@ -53,10 +53,15 @@
     </div>
     <script type="text/javascript">
 
+    bridgeit.useJSON64 = true;
+
     function scanBeacons()  {
 
         var options = {
-            uuid: 'E2C56DB5-DFFB-48D2-B060-D0F5A71096E0'
+            beacons: [
+                {uuid: 'E2C56DB5-DFFB-48D2-B060-D0F5A71096E0',
+                name: 'BridgeItBeacon'}
+            ]
         }
 
         bridgeit.beacons(
@@ -68,8 +73,11 @@
         var nearby = document.getElementById("nearby");
         nearby.innerHTML = "";
         for (var i = 0; i < beacons.length; i++)  {
-            nearby.innerHTML += "<div style='font-size:10px;font-weight:bold;color:#FF855E;'>" + 
-                    beacons[i].uuid + "</div>";
+            nearby.innerHTML += 
+                "<span style='font-weight:bold;color:#FF855E;'>" + 
+                    beacons[i].name + " </span>";
+            nearby.innerHTML += "<span style='font-size:10px;'>" + 
+                    beacons[i].uuid + "</span><br>";
             nearby.innerHTML += "<div>Major: " + beacons[i].major + 
                     " Minor: " + beacons[i].minor + " Range: " + 
                     beacons[i].acc + "m</div>";
