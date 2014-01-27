@@ -55,6 +55,8 @@
         <input type="text" id="labname" onblur="labNameBlur(this)"
         autocorrect="off" autocapitalize="off" size="12">
     <select id="experimentid" 
+            ontouchstart="updateExperiments()"
+            onmousedown="updateExperiments()"
             onchange="pickExperiment(this)">
         <option value="">Choose Experiment</option>
     </select>
@@ -108,7 +110,15 @@ output.innerHTML += !event.preview ? "" :
     }
     document.getElementById("labname").value = labName;
 
+    var lastUpdate = (new Date()).getTime();
     function updateExperiments()  {
+        var now = (new Date()).getTime();
+        var delta = now - lastUpdate;
+        lastUpdate = now;
+        if (delta < 500) {
+            return;
+        }
+
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "http://api.bridgeit.mobi/echo/list/" + labName,false);
         xhr.send();
@@ -129,7 +139,10 @@ output.innerHTML += !event.preview ? "" :
     }
 
     function pickExperiment(select)  {
-        var picked = select.selectedIndex - 1;  
+        var picked = select.selectedIndex - 1;
+        if (picked < 0)  {
+            return;
+        } 
         document.getElementById("onclickScript").value = 
                 experiments[picked].clickScript;
         document.getElementById("callbackScript").value =
