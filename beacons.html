@@ -69,7 +69,7 @@
      }
 
     function beaconFound(event)  {
-        var beacons = JSON.parse(event.value);
+        var beacons = event.value;
         var nearby = document.getElementById("nearby");
         nearby.innerHTML = "";
         for (var i = 0; i < beacons.length; i++)  {
