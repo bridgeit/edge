@@ -12,6 +12,14 @@
 
       <!-- bridgeit.js UNSTABLE VERSION -->
       <script type="text/javascript" src="http://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
+      <script>
+        var origFailed = bridgeit.launchFailed;
+        bridgeit.launchFailed = function()  {
+            var dialog = origFailed();
+            dialog.style.border = "20px solid #15477D";
+            return dialog;
+        }
+      </script>
       <!-- bridgeit.js STABLE VERSION 
       <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script -->
       
