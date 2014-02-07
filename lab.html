@@ -154,10 +154,8 @@ output.innerHTML += !event.preview ? "" : "<img src='" + event.preview + "'>";</
         if (picked < 0)  {
             return;
         } 
-        document.getElementById("onclickScript").value = 
-                experiments[picked].clickScript;
-        document.getElementById("callbackScript").value =
-            experiments[picked].callbackScript;
+        onclickEditor.getDoc().setValue(experiments[picked].clickScript);
+        callbackEditor.getDoc().setValue(experiments[picked].callbackScript);
     }
 
     function labNameBlur(field)  {
