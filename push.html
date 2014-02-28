@@ -110,14 +110,14 @@
         lastPushTimeStamp = now.getTime();
         var outDiv = document.getElementById("notifications");
         var row = document.createElement("div");
-        if( hasClassList() )
+        if (row.classList)
             row.classList.add('hl');
         outDiv.insertBefore(row, outDiv.firstChild);
         var rowMarkup = "<b>You were notified:</b> " + simpleTime();
         storeNotification(rowMarkup);
         row.innerHTML = rowMarkup;
         window.setTimeout(function() {
-            if( hasClassList() )
+            if (row.classList)
                 row.classList.remove('hl');
         }, 3000);
         updatePushButtonText('Push in 10 seconds ...');
