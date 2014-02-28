@@ -156,7 +156,8 @@
     var cloudPushReady;
     
     if (!cloudPushReady)  {
-        bridgeit.usePushService( window.pushHub, window.apiKey);
+        bridgeit.useServices({serviceBase:"http://labs.icesoft.com/"});
+        bridgeit.usePushService();
         bridgeit.addPushListener(bridgeit.getId(), 'handlePush');
         cloudPushReady = true;
     }
