@@ -156,7 +156,10 @@
     var cloudPushReady;
     
     if (!cloudPushReady)  {
-        bridgeit.useServices({serviceBase:"http://labs.icesoft.com/"});
+        bridgeit.useServices({
+                realm:"widgets.org",
+                serviceBase:"http://labs.icesoft.com/"});
+        bridgeit.login("tomjones","secret");
         bridgeit.usePushService();
         bridgeit.addPushListener(bridgeit.getId(), 'handlePush');
         cloudPushReady = true;
