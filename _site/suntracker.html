@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>BridgeIt AR Sun Tracker </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+      <link rel="icon" type="image/png" href="favicon.png"/>
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      
+      <link rel="stylesheet" href="http://bridgeit.github.io/demo-jqm/css/mobile.css" type="text/css" />
+
+      <!-- bridgeit.js UNSTABLE VERSION -->
+      <script type="text/javascript" src="http://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
+      <!-- bridgeit.js STABLE VERSION 
+      <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script -->
+      
+      <!-- APP ICONS -->
+      <link rel="apple-touch-icon" href="images/touch-icon-iphone.png"/>
+      <link rel="apple-touch-icon" sizes="76x76" href="images/touch-icon-ipad.png"/>
+      <link rel="apple-touch-icon" sizes="120x120" href="images/touch-icon-iphone-retina.png"/>
+      <link rel="apple-touch-icon" sizes="152x152" href="images/touch-icon-ipad-retina.png"/>
+      <link rel="apple-touch-startup-image" href="images/touch-startup-image.png"/>
+
+      <script>
+         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+         ga('create', 'UA-45568600-1', 'bridgeit.mobi');
+         ga('send', 'pageview');
+
+      </script>
+      
+   </head>
+
+<body style="font-family:sans-serif">
+
+    <img style="display:block;width:100%; margin-left: auto; margin-right: auto; max-width:400px;padding-bottom:20px;" 
+        src="images/bridgeit-banner.png">
+
+    <div style="padding-top:20px; padding-bottom:20px">
+       <img style="height:40px;vertical-align:middle" src="images/ar-icon.png">
+       <span style="font-size:21px;font-weight:bold;color:#FF855E;">Sun Tracker</span>
+    </div>
+
+    <div class="row" style="padding-bottom:20px"><p class="normalText" >The Augmented Reality Sun Tracker shows the current position of the Sun. <b><i>Do not stare directly at the Sun!</i></b></p></div>
+
+    <a type="button" class="btn" style="min-height:35px;border-style:solid; border-color:grey;border-width:1px;" 
+        onclick="viewSun();">Track the Sun ... </a>
+
+    <script type="text/javascript">
+
+    function sign(x)  {
+        if (0 == x)  {
+            return 1;
+        }
+        return (x / Math.abs(x));
+    }
+
+    //signed integer part of x
+    function int(x)  {
+        return sign(x) * Math.floor(Math.abs(x));
+    }
+
+
+    //ported from http://www.stargazing.net/kepler/sun.html
+
+    var pi = Math.PI;
+    var twoPi = 2 * pi;
+    var degs = 180 / pi;
+    var rads = pi / 180;
+
+    //from http://aa.usno.navy.mil/faq/docs/JD_Formula.php
+    //valid for 1801–2099
+    //replaces port from stargazing.net likely problem being
+    //unclear use of integer arithmetic
+    function julianDay(Y, M, D, UT)  {
+        var JD = 367*Y - int((7*(Y+int((M+9)/12)))/4) + int((275*M)/9) + 
+            D + 1721013.5 + UT/24  - 0.5 * sign(100*Y + M-190002.5) + 0.5;
+        return JD;
+    }
+
+    function sunDay(y, m, d, h)  {
+        return julianDay(y, m, d, h) - julianDay(2000,1,1,12);
+    }
+
+    //return an angle in the range 0 to two pi
+        function canon(x)  {
+            var b = x / twoPi;
+            var a = twoPi * (b - int(b));
+            if (a < 0)  {
+                return (twoPi + a);
+            }
+            return a;
+        }
+
+        function atn2(y, x)  {
+            var result = Math.atan2(y,x);
+            if (result < 0)  {
+                return (twoPi + result);
+            }
+            return result;
+        }
+
+        function sun(d)  {
+            //mean longitude of the Sun
+            var L = canon(280.461 * rads + 0.9856474 * rads * d);
+            //mean anomaly of the Sun
+            var g = canon(357.528 * rads + 0.9856003 * rads * d);
+            //Ecliptic longitude of the Sun
+            var E = canon(L + 1.915 * rads * Math.sin(g) + 0.02 * rads * Math.sin(2 * g));
+            return E;
+        }
+
+
+        //var date = new Date(Date.UTC(1997,7,7,11));
+        //Output for 11:00 UT on 1997 August 7.
+        //  year  : 1997
+        //  month : 8
+        //  day   : 7
+        //hour UT : 11
+        // minute : 0
+        //
+        //Position of Sun
+        //===============
+        //
+        //     days : -877.04167
+        //longitude :  134.98
+        //       RA :    9.163
+        //      DEC :   16.34
+        // distance :    1.01408
+        //eq time   :   -5.75
+
+        var date = new Date(Date.UTC(1997,7,7,11));
+        var h = date.getUTCHours() + (date.getMinutes() / 60);
+        var d = sunDay(date.getFullYear(), date.getMonth() + 1, 
+                date.getDate(), h);
+        var lambda = sun(d);
+        //Obliquity of the ecliptic
+        var obliq = 23.439 * rads - 0.0000004 * rads * d;
+
+        //Find the RA and DEC of the Sun
+        var alpha = atn2(Math.cos(obliq) * Math.sin(lambda), Math.cos(lambda));
+        var delta = Math.asin(Math.sin(obliq) * Math.sin(lambda));
+
+
+        //Find the Earth - Sun distance
+        var g = canon(357.528 * rads + 0.9856003 * rads * d);
+        var r = 1.00014 - 0.01671 * Math.cos(g) - .00014 * Math.cos(2 * g);
+        var L = canon(280.461 * rads + 0.9856474 * rads * d);
+
+        //Find the Equation of Time
+        var eq = (L - alpha) * degs * 4;
+
+        console.log("     days : " + d);
+        console.log( "longitude : " + lambda * degs);
+        console.log( "       RA : " + alpha * degs / 15);
+        console.log( "      DEC : " + delta * degs);
+        console.log( " distance : " + r);
+        console.log( "eq time   : " + eq);
+
+
+
+    function viewSun()  {
+        var barURL = window.location.toString();
+        var baseURL = barURL.substring(0,
+                barURL.lastIndexOf("/")) + "/";
+
+        var date = new Date();
+        var h = date.getUTCHours() + (date.getMinutes() / 60);
+        var d = sunDay(date.getFullYear(), date.getMonth() + 1, 
+                date.getDate(), h);
+        var lambda = sun(d);
+        //Obliquity of the ecliptic
+        var obliq = 23.439 * rads - 0.0000004 * rads * d;
+
+        //Find the RA and DEC of the Sun
+        var alpha = atn2(Math.cos(obliq) * Math.sin(lambda), Math.cos(lambda));
+        var delta = Math.asin(Math.sin(obliq) * Math.sin(lambda));
+
+        console.log( "current sun RA : " + alpha * degs / 15);
+        console.log( "current sun DEC : " + delta * degs);
+
+        //lat,lon coords reversed in this version of BridgeIt
+        var sunradec = delta * degs + "," + alpha * degs / 15 + ",i,,images/sun.png";
+        var options = {
+            postURL: 'http://api.bridgeit.mobi/echo/blob'
+        }
+        options['Sun'] = sunradec;
+
+        bridgeit.augmentedReality(
+                '_sun','onReturnFromAugmentedReality', options );
+     }
+
+    function onReturnFromAugmentedReality(event)  {
+        var text = event.value;
+        if (event.response)  {
+            var len = "Aug".length;
+            var responseLoc = "" + JSON.parse(event.response)["_loc"][0];
+            console.log("AR selected " + responseLoc);
+            document.getElementById("selected")
+                    .setAttribute("src",
+                    locations[responseLoc].split(",")[4]);
+        }
+    }
+
+    bridgeit.launchFailed = function(){
+        document.getElementById('appStoreLink').href = bridgeit.appStoreURL();
+        var popup = document.getElementById('getBridgeItPopup');
+        popup.style.opacity = 0.95;
+        popup.style.display = 'block';
+        var vwidth = document.body.clientWidth;
+    //center popup with 30px padding of body
+    //popup.style.marginLeft = '' + ((vwidth*0.4)/2)-30 + 'px';
+    }
+
+    function closeGetBridgeItPopup(){
+        var popup = document.getElementById('getBridgeItPopup');
+        popup.style.opacity = 0;
+        popup.style.display = 'none';
+        return true;
+    }
+
+    </script>
+
+    <div id="getBridgeItPopup" style="opacity: 0;display:none;" class="ui-body-c">
+        <a id="closeGetBridgePopup" onclick="closeGetBridgeItPopup();"><i class="icon-remove-sign"></i></a>
+        <p>Missing BridgeIt native features..would you like to download the BridgeIt utility app now?</p>
+        <a id="appStoreLink" href="http://www.icesoft.org/projects/ICEmobile/containers.jsf"
+            class="whiteButton bridgeItBtn" onclick="return closeGetBridgeItPopup();" target="_blank">Download the utility app now</a>
+    </div>
+
+</body>
+</html>
+

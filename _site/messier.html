@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>BridgeIt Messier Locator</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+      <link rel="icon" type="image/png" href="favicon.png"/>
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      
+      <link rel="stylesheet" href="http://bridgeit.github.io/demo-jqm/css/mobile.css" type="text/css" />
+
+      <script type="text/javascript" src="bodies.js"></script>
+
+      <!-- bridgeit.js UNSTABLE VERSION -->
+      <script type="text/javascript" src="http://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
+
+      <!-- bridgeit.js STABLE VERSION 
+      <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script -->
+      
+      <!-- APP ICONS -->
+      <link rel="apple-touch-icon" href="images/touch-icon-iphone.png"/>
+      <link rel="apple-touch-icon" sizes="76x76" href="images/touch-icon-ipad.png"/>
+      <link rel="apple-touch-icon" sizes="120x120" href="images/touch-icon-iphone-retina.png"/>
+      <link rel="apple-touch-icon" sizes="152x152" href="images/touch-icon-ipad-retina.png"/>
+      <link rel="apple-touch-startup-image" href="images/touch-startup-image.png"/>
+
+      <script>
+         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+         ga('create', 'UA-45568600-1', 'bridgeit.mobi');
+         ga('send', 'pageview');
+
+      </script>
+      
+   </head>
+
+<body style="font-family:sans-serif">
+
+    <img style="display:block;width:100%; margin-left: auto; margin-right: auto; max-width:400px;padding-bottom:20px;" 
+        src="images/bridgeit-banner.png">
+
+    <div style="padding-top:10px; padding-bottom:10px">
+       <img style="height:40px;vertical-align:middle" src="images/ar-icon.png">
+       <span style="font-size:21px;font-weight:bold;color:#FF855E;">BridgeIt Messier Locator</span>
+    </div>
+
+    <div class="row" style="padding-bottom:20px"><p class="normalText" >The Augmented Reality view shows the current position of the specified named stars or Messier objects (separated by commas).</i></b></p></div>
+
+    <div class="row" style="padding-bottom:20px"><input style="font-size: 14px;height:35px;width:100%;padding: 2px 6px;display: inline-block;box-sizing: border-box;" id="bodyInput" value="M82, Polaris, Merak, Dubhe"></div>
+
+    <a type="button" class="btn" style="min-height:35px;border-style:solid; border-color:grey;border-width:1px;" 
+        onclick="viewSystem();">Augmented Reality ... </a>
+
+    <div style="padding-top:10px;width:100%">
+      <div style="width:100px;margin-left:auto;margin-right:auto;">
+       <img id="selectImage">
+      </div>
+    </div>
+
+    <script type="text/javascript">
+
+    bridgeit.useJSON64 = true;
+
+    var locations;
+    
+    var bodyTable = { };
+    bodies.forEach(function(body) {
+        bodyTable[body.name.toLowerCase()] = body;
+    });
+    
+    function viewSystem()  {
+
+        var objectString = document.getElementById("bodyInput").value;
+
+        var objectList = objectString.split(/,/);
+        for (i = 0; i < objectList.length; i++)  {
+            objectList[i] = objectList[i]
+                    .replace(/^\s\s*/, '').replace(/\s\s*$/, '').toLowerCase();
+        }
+        var locations = [ ];
+
+        objectList.forEach(function(theObject) {
+            var body = bodyTable[theObject];
+            if (body)  {
+                body.icon = "images/pluto.png"
+                locations.push(body);
+            }
+        });
+
+        var options = {
+            postURL: 'http://api.bridgeit.mobi/echo/blob',
+            locations: locations
+        }
+
+        bridgeit.augmentedReality(
+                '_messier','augReturn', options );
+     }
+
+    function augReturn(event)  {
+        var selected = event.value;
+        locations.forEach(function (cel) {
+            if (cel.name == selected)  {
+                document.getElementById("selectImage")
+                        .setAttribute("src", cel.icon);
+            }
+        });
+    }
+    </script>
+
+</body>
+</html>
+
