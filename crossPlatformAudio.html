@@ -40,9 +40,10 @@
                 var device = "";
                 for (var i=uploadedAudio.length-1; i>0; i--) {
                     device = uploadedAudio[i].device;
+                    uploadedAudio[i].audio = uploadedAudio[i].audio.split("\"").join(""); //strip quotes
                     uploadedAudioList = uploadedAudioList +
-                            device + ": " +
-                            "<audio controls preload='auto' src=" + uploadedAudio[i].audio + "></audio><br>";
+                    device + ": " +
+                    "<audio controls preload='auto' src='" + uploadedAudio[i].audio + "'></audio><br>";
                     if (i == uploadedAudio.length - 10) { break; } //only show last 10 uploads
                 }
                 document.getElementById("uploadedAudio").innerHTML = uploadedAudioList;
@@ -125,6 +126,7 @@
                 device: userDevice
             }
             xhr.send(JSON.stringify(audio));
+            bridgeit.push("audioTest", {subject:'Audio Push Received',detail:'Someone has uploaded an audio clip!'} )
         }
 
     </script>
