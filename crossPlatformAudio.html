@@ -1,147 +1,183 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Cross Platform Audio Compatibility Test</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <head>
+        <title>Cross Platform Audio Compatibility Test</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
 
-    <!-- bridgeit.js UNSTABLE VERSION -->
-    <script type="text/javascript" src="http://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
-    <!-- bridgeit.js STABLE VERSION
-    <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script -->
+        <!-- bridgeit.js UNSTABLE VERSION -->
+        <script type="text/javascript" src="http://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
+        <!-- bridgeit.js STABLE VERSION
+        <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script -->
 
-    <link href="http://bridgeit.github.io/demo-jqm/css/mobile.css" rel="stylesheet" type="text/css"/>
-    <link href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" rel="stylesheet" type="text/css">
+        <link href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" rel="stylesheet" type="text/css">
 
-    <style type="text/css">
-        #micBtn {width:165px;}
-    </style>
-</head>
+        <style type="text/css">
+            #micBtn {width:165px;}
+            table { text-align:center;}
+            td {padding: 10px 20px 0 0;}
+            thead {font-weight:bold;}
+        </style>
+    </head>
 
-<body>
-    <script type="text/javascript">
-        var echoService = "http://api.bridgeit.mobi/echo/";
-        var pushService = "http://api.bridgeit.mobi/push/";
-        var pushApiKey = "197EBF31-40CD-444F-826F-10158A0F3581";
-        var uploadedAudio = [ ];
-        var userDevice = "";
-        var audioPushReady;
-        var xhr = new XMLHttpRequest();
-        var userAgent = navigator.userAgent;
+    <body>
+        <script type="text/javascript">
+            var echoService = "http://api.bridgeit.mobi/echo/";
+            var pushService = "http://api.bridgeit.mobi/push/";
+            var pushApiKey = "197EBF31-40CD-444F-826F-10158A0F3581";
+            var uploadedAudio = [ ];
+            var userDevice = "";
+            var audioPushReady;
+            var xhr = new XMLHttpRequest();
+            var userAgent = navigator.userAgent;
 
-        function updateAudioList() {
-            console.log('Audio updateAudioList');
-            xhr = new XMLHttpRequest();
-            xhr.open("GET", echoService + "list/audiotest",false);
-            xhr.send();
-            try {
-                uploadedAudio = JSON.parse(xhr.responseText);
-                var uploadedAudioList = "";
-                var device = "";
-                for (var i=uploadedAudio.length-1; i>0; i--) {
-                    device = uploadedAudio[i].device;
-                    uploadedAudio[i].audio = uploadedAudio[i].audio.split("\"").join(""); //strip quotes
-                    uploadedAudioList = uploadedAudioList +
-                    device + ": " +
-                    "<audio controls preload='auto' src='" + uploadedAudio[i].audio + "'></audio><br>";
-                    if (i == uploadedAudio.length - 10) { break; } //only show last 10 uploads
+            // set up push
+            if (!audioPushReady)  {
+                bridgeit.usePushService(pushService, pushApiKey);
+                bridgeit.addPushListener("audioTest","updateAudioList");
+                audioPushReady = true;
+            }
+
+            // try and detect device
+            if (userAgent.indexOf("Android") > -1) {
+                userAgent = userAgent.substring(userAgent.indexOf("Android"));
+                userDevice = userAgent.substring(0,userAgent.indexOf(";"));
+            }
+            else if (userAgent.indexOf("iPhone") > -1) {
+                userDevice = "iPhone";
+                if (userAgent.indexOf("OS 6_") > - 1) {
+                    userDevice = userDevice + " iOS6";
                 }
-                document.getElementById("uploadedAudio").innerHTML = uploadedAudioList;
+                else if (userAgent.indexOf("OS 7_") > - 1) {
+                    userDevice = userDevice + " iOS7";
+                }
             }
-            catch (e) {
-                alert(e);
-            };
-        }
+            else if (userAgent.indexOf("iPad") > -1) {
+                userDevice = "iPad";
+                if (userAgent.indexOf("OS 6_") > - 1) {
+                    userDevice = userDevice + " iOS6";
+                }
+                else if (userAgent.indexOf("OS 7_") > - 1) {
+                    userDevice = userDevice + " iOS7";
+                }
+            }
+            else if (userAgent.indexOf("iPod") > -1) {
+                userDevice = "iPod";
+                if (userAgent.indexOf("OS 6_") > - 1) {
+                    userDevice = userDevice + " iOS6";
+                }
+                else if (userAgent.indexOf("OS 7_") > - 1) {
+                    userDevice = userDevice + " iOS7";
+                }
+            }
+            else if (userAgent.indexOf("BB10") > -1) {
+                userDevice = "Blackberry 10";
+            }
+            else if (userAgent.indexOf("BlackBerry") > -1) {
+                userDevice = "BlackBerry (Older than 10)";
+            }
+            else if (userAgent.indexOf('IEMobile') > -1
+                    || (userAgent.indexOf('MSIE 10') > -1
+                    && typeof window.orientation !== 'undefined')) {
+                userDevice = "Windows Phone 8";
+            }
+            else {
+                userDevice = "Unknown Device";
+            }
 
-        if (!audioPushReady)  {
-            bridgeit.usePushService(pushService, pushApiKey);
-            bridgeit.addPushListener("audioTest","onReceiveAudioPush");
-            audioPushReady = true;
-        }
+            function getTimeInMST() {
+                var d = new Date();
+                var offsetMST = -7; //display time in MST, ignoring DST
+                var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+                var nd = new Date(utc + (3600000*offsetMST));
+                var minutes = nd.getMinutes() < 10 ? '0' + nd.getMinutes() : nd.getMinutes();
+                var seconds = nd.getSeconds() < 10 ? '0' + nd.getSeconds() : nd.getSeconds();
+                var time = nd.getMonth()+1 + "/" + nd.getDate() + "/" + nd.getFullYear() + " " +
+                        nd.getHours() + ":" + minutes + ":" + seconds;
+                return time;
+            }
 
-        function onReceiveAudioPush(){
-            console.log("Audio Push received");
+            function updateAudioList() {
+                xhr = new XMLHttpRequest();
+                xhr.open("GET", echoService + "list/audiotest",false);
+                xhr.send();
+                try {
+                    if (xhr.responseText != null && xhr.responseText != "") {
+                        uploadedAudio = JSON.parse(xhr.responseText);
+                        var table = document.getElementById("uploadedAudioTbl");
+                        var header = table.getElementsByTagName('thead')[0];
+                        var row = header.insertRow(-1);
+                        var cell = row.insertCell(-1);
+                        cell.innerHTML = "Device";
+                        cell = row.insertCell(1);
+                        cell.innerHTML = "Date/Time (MST)";
+                        cell = row.insertCell(2);
+                        cell.innerHTML = "Audio";
+
+                        for (var i=uploadedAudio.length-1; i>=0; i--) {
+                            row = table.getElementsByTagName('tbody')[0].insertRow(-1);
+                            cell = row.insertCell(-1);
+                            cell.innerHTML = uploadedAudio[i].device;
+
+                            cell = row.insertCell(-1);
+                            cell.innerHTML = uploadedAudio[i].dateTime ? uploadedAudio[i].dateTime : 'Not Available';
+
+                            cell = row.insertCell(-1);
+                            var element = document.createElement("audio");
+                            element.controls = "controls";
+                            element.preload = "auto";
+                            element.src = uploadedAudio[i].audio.split("\"").join(""); //strip quotes
+                            cell.appendChild(element);
+
+                            if (i == uploadedAudio.length - 10) { break; } //only show last 10 uploads
+                        }
+                    }
+                    else  {
+                        document.getElementById("messages").innerHTML = "There are currently no audio resources to show.";
+                    }
+                }
+                catch (e) {
+                    console.error(e);
+                };
+            }
+
+            function onAfterAudioCapture(event){
+                if (event.response)  {
+                    postResponse(event.response);
+                }
+            }
+
+            function postResponse(audioSrc) {
+                xhr = new XMLHttpRequest();
+                xhr.open("POST", echoService + "list/audiotest",false);
+                xhr.setRequestHeader("Content-type","application/json; charset=utf-8");
+                var audio = {
+                    audio: audioSrc,
+                    device: userDevice,
+                    dateTime: getTimeInMST()
+                }
+                xhr.send(JSON.stringify(audio));
+                bridgeit.push("audioTest", null);
+            }
+
+        </script>
+
+        <a id='micBtn' type="button" class="btn ui-btn ui-shadow ui-btn-corner-all ui-btn-up-c"
+           onclick="bridgeit.microphone('micBtn', 'onAfterAudioCapture', {postURL: echoService + 'blob'});">
+            <span class="ui-btn-inner">
+                <span class="ui-btn-text">Record Audio</span>
+            </span>
+        </a>
+        <h3>Uploaded Audio</h3>
+        <p>Only the 10 most recent audio uploads will be shown</p>
+        <table id="uploadedAudioTbl">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+        <span id="messages"></span>
+        <script type="text/javascript">
             updateAudioList();
-        }
-
-        // try and detect device
-        if (userAgent.indexOf("Android") > -1) {
-            userAgent = userAgent.substring(userAgent.indexOf("Android"));
-            userDevice = userAgent.substring(0,userAgent.indexOf(";"));
-        }
-        else if (userAgent.indexOf("iPhone") > -1) {
-            userDevice = "iPhone";
-            if (userAgent.indexOf("OS 6_") > - 1) {
-                userDevice = userDevice + " iOS6";
-            }
-            else if (userAgent.indexOf("OS 7_") > - 1) {
-                userDevice = userDevice + " iOS7";
-            }
-        }
-        else if (userAgent.indexOf("iPad") > -1) {
-            userDevice = "iPad";
-            if (userAgent.indexOf("OS 6_") > - 1) {
-                userDevice = userDevice + " iOS6";
-            }
-            else if (userAgent.indexOf("OS 7_") > - 1) {
-                userDevice = userDevice + " iOS7";
-            }
-        }
-        else if (userAgent.indexOf("iPod") > -1) {
-            userDevice = "iPod";
-            if (userAgent.indexOf("OS 6_") > - 1) {
-                userDevice = userDevice + " iOS6";
-            }
-            else if (userAgent.indexOf("OS 7_") > - 1) {
-                userDevice = userDevice + " iOS7";
-            }
-        }
-        else if (userAgent.indexOf("BB10") > -1) {
-            userDevice = "Blackberry 10";
-        }
-        else if (userAgent.indexOf("BlackBerry") > -1) {
-            userDevice = "BlackBerry (Older than 10)";
-        }
-        else if (userAgent.indexOf('IEMobile') > -1
-             || (userAgent.indexOf('MSIE 10') > -1
-             && typeof window.orientation !== 'undefined')) {
-            userDevice = "Windows Phone 8";
-        }
-        else {
-            userDevice = "Unknown Device";
-        }
-
-        function onAfterAudioCapture(event){
-            if (event.response)  {
-                postResponse(event.response);
-            }
-        }
-
-        function postResponse(audioSrc) {
-            xhr = new XMLHttpRequest();
-            xhr.open("POST", echoService + "list/audiotest",false);
-            xhr.setRequestHeader("Content-type","application/json; charset=utf-8");
-            var audio = {
-                audio: audioSrc,
-                device: userDevice
-            }
-            xhr.send(JSON.stringify(audio));
-            bridgeit.push("audioTest", null);
-        }
-
-    </script>
-
-    <a id='micBtn' type="button" class="btn ui-btn ui-shadow ui-btn-corner-all ui-btn-up-c"
-       onclick="bridgeit.microphone('micBtn', 'onAfterAudioCapture', {postURL: echoService + 'blob'});">
-        <span class="ui-btn-inner">
-            <span class="ui-btn-text">Record Audio</span>
-        </span>
-    </a>
-    <h3>Uploaded Audio</h3>
-    <span id="uploadedAudio"></span>
-    <script type="text/javascript">
-        updateAudioList();
-    </script>
-</body>
+        </script>
+    </body>
 </html>
 
