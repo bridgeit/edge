@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cross Platform Video Compatibility Test</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+
+        <!-- bridgeit.js UNSTABLE VERSION -->
+        <script type="text/javascript" src="http://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
+        <!-- bridgeit.js STABLE VERSION
+        <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script -->
+
+        <link href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" rel="stylesheet" type="text/css">
+
+        <style type="text/css">
+            #camBtn {width:165px;}
+            table { text-align:center;}
+            td {padding: 10px 20px 0 0;}
+            thead {font-weight:bold;}
+        </style>
+    </head>
+
+    <body>
+        <script type="text/javascript">
+            var echoService = "http://api.bridgeit.mobi/echo/";
+            var pushService = "http://api.bridgeit.mobi/push/";
+            var pushApiKey = "197EBF31-40CD-444F-826F-10158A0F3581";
+            var uploadedVideo = [ ];
+            var userDevice = "";
+            var videoPushReady;
+            var xhr = new XMLHttpRequest();
+            var userAgent = navigator.userAgent;
+
+            // set up push
+            if (!videoPushReady)  {
+                bridgeit.usePushService(pushService, pushApiKey);
+                bridgeit.addPushListener("videoTest","updateVideoList");
+                videoPushReady = true;
+            }
+
+            // try and detect device
+            if (userAgent.indexOf("Android") > -1) {
+                userAgent = userAgent.substring(userAgent.indexOf("Android"));
+                userDevice = userAgent.substring(0,userAgent.indexOf(";"));
+            }
+            else if (userAgent.indexOf("iPhone") > -1) {
+                userDevice = "iPhone";
+                if (userAgent.indexOf("OS 6_") > - 1) {
+                    userDevice = userDevice + " iOS6";
+                }
+                else if (userAgent.indexOf("OS 7_") > - 1) {
+                    userDevice = userDevice + " iOS7";
+                }
+            }
+            else if (userAgent.indexOf("iPad") > -1) {
+                userDevice = "iPad";
+                if (userAgent.indexOf("OS 6_") > - 1) {
+                    userDevice = userDevice + " iOS6";
+                }
+                else if (userAgent.indexOf("OS 7_") > - 1) {
+                    userDevice = userDevice + " iOS7";
+                }
+            }
+            else if (userAgent.indexOf("iPod") > -1) {
+                userDevice = "iPod";
+                if (userAgent.indexOf("OS 6_") > - 1) {
+                    userDevice = userDevice + " iOS6";
+                }
+                else if (userAgent.indexOf("OS 7_") > - 1) {
+                    userDevice = userDevice + " iOS7";
+                }
+            }
+            else if (userAgent.indexOf("BB10") > -1) {
+                userDevice = "Blackberry 10";
+            }
+            else if (userAgent.indexOf("BlackBerry") > -1) {
+                userDevice = "BlackBerry (Older than 10)";
+            }
+            else if (userAgent.indexOf('IEMobile') > -1
+                    || (userAgent.indexOf('MSIE 10') > -1
+                    && typeof window.orientation !== 'undefined')) {
+                userDevice = "Windows Phone 8";
+            }
+            else {
+                userDevice = "Unknown Device";
+            }
+
+            function getTimeInMST() {
+                var d = new Date();
+                var offsetMST = -7; //display time in MST, ignoring DST
+                var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+                var nd = new Date(utc + (3600000*offsetMST));
+                var minutes = nd.getMinutes() < 10 ? '0' + nd.getMinutes() : nd.getMinutes();
+                var seconds = nd.getSeconds() < 10 ? '0' + nd.getSeconds() : nd.getSeconds();
+                var time = nd.getMonth()+1 + "/" + nd.getDate() + "/" + nd.getFullYear() + " " +
+                        nd.getHours() + ":" + minutes + ":" + seconds;
+                return time;
+            }
+
+            function updateVideoList() {
+                xhr = new XMLHttpRequest();
+                xhr.open("GET", echoService + "list/videotest",false);
+                xhr.send();
+                try {
+                    if (xhr.responseText != null && xhr.responseText != "") {
+                        uploadedVideo = JSON.parse(xhr.responseText);
+                        var table = document.getElementById("uploadedVideoTbl");
+                        var header = table.getElementsByTagName('thead')[0];
+                        var row = header.insertRow(-1);
+                        var cell = row.insertCell(-1);
+                        cell.innerHTML = "Device";
+                        cell = row.insertCell(1);
+                        cell.innerHTML = "Date/Time (MST)";
+                        cell = row.insertCell(2);
+                        cell.innerHTML = "Video";
+
+                        for (var i=uploadedVideo.length-1; i>=0; i--) {
+                            row = table.getElementsByTagName('tbody')[0].insertRow(-1);
+                            cell = row.insertCell(-1);
+                            cell.innerHTML = uploadedVideo[i].device;
+
+                            cell = row.insertCell(-1);
+                            cell.innerHTML = uploadedVideo[i].dateTime ? uploadedVideo[i].dateTime : 'Not Available';
+
+                            cell = row.insertCell(-1);
+                            var element = document.createElement("video");
+                            element.controls = "controls";
+                            element.preload = "auto";
+                            element.src = uploadedVideo[i].video.split("\"").join(""); //strip quotes
+                            cell.appendChild(element);
+
+                            if (i == uploadedVideo.length - 10) { break; } //only show last 10 uploads
+                        }
+                    }
+                    else  {
+                        document.getElementById("messages").innerHTML = "There are currently no video resources to show.";
+                    }
+                }
+                catch (e) {
+                    console.error(e);
+                };
+            }
+
+            function onAfterVideoCapture(event){
+                if (event.response)  {
+                    postResponse(event.response);
+                }
+            }
+
+            function postResponse(videoSrc) {
+                xhr = new XMLHttpRequest();
+                xhr.open("POST", echoService + "list/videotest",false);
+                xhr.setRequestHeader("Content-type","application/json; charset=utf-8");
+                var video = {
+                    video: videoSrc,
+                    device: userDevice,
+                    dateTime: getTimeInMST()
+                }
+                xhr.send(JSON.stringify(video));
+                bridgeit.push("videoTest", null);
+            }
+
+        </script>
+
+        <a id='camBtn' type="button" class="btn ui-btn ui-shadow ui-btn-corner-all ui-btn-up-c"
+           onclick="bridgeit.camcorder('camBtn', 'onAfterVideoCapture', {postURL: echoService + 'blob'});">
+            <span class="ui-btn-inner">
+                <span class="ui-btn-text">Record Video</span>
+            </span>
+        </a>
+        <h3>Uploaded Video</h3>
+        <p>Only the 10 most recent video uploads will be shown</p>
+        <table id="uploadedVideoTbl">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+        <span id="messages"></span>
+        <script type="text/javascript">
+            updateVideoList();
+        </script>
+    </body>
+</html>
+
