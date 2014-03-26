@@ -104,7 +104,12 @@
                 try {
                     if (xhr.responseText != null && xhr.responseText != "") {
                         uploadedVideo = JSON.parse(xhr.responseText);
+
                         var table = document.getElementById("uploadedVideoTbl");
+                        // clear table
+                        while ( table.rows.length > 0 ) {
+                            table.deleteRow(0);
+                        }
                         var header = table.getElementsByTagName('thead')[0];
                         var row = header.insertRow(-1);
                         var cell = row.insertCell(-1);
