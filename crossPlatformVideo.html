@@ -207,7 +207,7 @@
             }
         </script>
 
-        <form id="frm" onsubmit="changeMimeType();return false;">
+        <form id="frm" onsubmit="changeMimeType();document.getElementById('otherMimeType').blur();return false;">
             <a id='camBtn' type="button" class="btn ui-btn ui-shadow ui-btn-corner-all ui-btn-up-c"
                onclick="bridgeit.camcorder('camBtn', 'onAfterVideoCapture', {postURL: echoService + 'blob'});">
                 <span class="ui-btn-inner">
