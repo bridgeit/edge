@@ -15,8 +15,9 @@
         <style type="text/css">
             #camBtn {width:165px;}
             table { text-align:center;}
-            td {padding: 10px 20px 0 0;}
+            td {padding: 5px 10px 0 0;}
             thead {font-weight:bold;}
+            #otherMimeType {display:none;}
         </style>
     </head>
 
@@ -129,9 +130,9 @@
 
                             cell = row.insertCell(-1);
                             var element = document.createElement("video");
-                            element.controls = "controls";
-                            element.preload = "auto";
-                            element.src = uploadedVideo[i].video.split("\"").join(""); //strip quotes
+                            element.setAttribute("controls", "controls");
+                            element.setAttribute("preload", "auto");
+                            element.setAttribute("src",uploadedVideo[i].video.split("\"").join("")); //strip quotes
                             cell.appendChild(element);
 
                             if (i == uploadedVideo.length - 10) { break; } //only show last 10 uploads
@@ -165,14 +166,65 @@
                 bridgeit.push("videoTest", null);
             }
 
+            function changeMimeType() {
+                var mimeType = document.getElementById("mimeType").value;
+                var otherMimeType = document.getElementById("otherMimeType");
+                if (mimeType != null && mimeType != "") {
+                    if (mimeType == "other") {
+                        otherMimeType.setAttribute("style","display:inline;"); // show other box
+                        if (otherMimeType.value != null && otherMimeType.value != "") {
+                            updateVideoElements(otherMimeType.value);
+                        }
+                        else {
+                            updateVideoElements(null);
+                        }
+                    }
+                    else {
+                        otherMimeType.setAttribute("style","display:none");
+                        otherMimeType.value = "";
+                        updateVideoElements(mimeType);
+                    }
+                }
+                else {
+                    otherMimeType.setAttribute("style","display:none");
+                    otherMimeType.value = "";
+                    updateVideoElements(null);
+                }
+            }
+
+            function updateVideoElements(mimeType) {
+                var videoElements = document.getElementsByTagName("video");
+                if (mimeType != null) {
+                    for (var i=0; i<videoElements.length; i++) {
+                        videoElements[i].setAttribute("type",mimeType); // add user entered mime type
+                    }
+                }
+                else {
+                    for (var i=0; i<videoElements.length; i++) {
+                        videoElements[i].removeAttribute("type"); // remove type attribute
+                    }
+                }
+            }
         </script>
 
-        <a id='camBtn' type="button" class="btn ui-btn ui-shadow ui-btn-corner-all ui-btn-up-c"
-           onclick="bridgeit.camcorder('camBtn', 'onAfterVideoCapture', {postURL: echoService + 'blob'});">
-            <span class="ui-btn-inner">
-                <span class="ui-btn-text">Record Video</span>
-            </span>
-        </a>
+        <form id="frm" onsubmit="changeMimeType();return false;">
+            <a id='camBtn' type="button" class="btn ui-btn ui-shadow ui-btn-corner-all ui-btn-up-c"
+               onclick="bridgeit.camcorder('camBtn', 'onAfterVideoCapture', {postURL: echoService + 'blob'});">
+                <span class="ui-btn-inner">
+                    <span class="ui-btn-text">Record Video</span>
+                </span>
+            </a>
+            <br/>
+            <label for="mimeType">Mime Type (for all video elements):</label>
+            <select id="mimeType" onchange="changeMimeType();">
+                <option value="">Not Specified</option>
+                <option value="video/mp4">video/mp4</option>
+                <option value="video/webm">video/webm</option>
+                <option value="video/ogg">video/ogg</option>
+                <option value="other">Other</option>
+            </select>
+            <input id="otherMimeType" type="text" placeholder="Please Specify..." onblur="changeMimeType();"/>
+        </form>
         <h3>Uploaded Video</h3>
         <p>Only the 10 most recent video uploads will be shown</p>
         <table id="uploadedVideoTbl">
@@ -180,6 +232,7 @@
             <tbody></tbody>
         </table>
         <span id="messages"></span>
+
         <script type="text/javascript">
             updateVideoList();
         </script>
