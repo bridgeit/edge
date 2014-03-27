@@ -23,19 +23,20 @@
 
     <body>
         <script type="text/javascript">
+            var APP_NAME = "videoTest";
             var echoService = "http://api.bridgeit.mobi/echo/";
             var pushService = "http://api.bridgeit.mobi/push/";
+            var MEDIA_SERV = "http://labs.icesoft.com/media/";
             var pushApiKey = "197EBF31-40CD-444F-826F-10158A0F3581";
             var uploadedVideo = [ ];
             var userDevice = "";
             var videoPushReady;
-            var xhr = new XMLHttpRequest();
             var userAgent = navigator.userAgent;
 
             // set up push
             if (!videoPushReady)  {
                 bridgeit.usePushService(pushService, pushApiKey);
-                bridgeit.addPushListener("videoTest","updateVideoList");
+                bridgeit.addPushListener(APP_NAME, "updateVideoList");
                 videoPushReady = true;
             }
 
@@ -100,7 +101,7 @@
 
             function updateVideoList() {
                 xhr = new XMLHttpRequest();
-                xhr.open("GET", echoService + "list/videotest",false);
+                xhr.open("GET", echoService + "list/" + APP_NAME, false);
                 xhr.send();
                 try {
                     if (xhr.responseText != null && xhr.responseText != "") {
@@ -135,6 +136,12 @@
                             element.setAttribute("src",uploadedVideo[i].video.split("\"").join("")); //strip quotes
                             cell.appendChild(element);
 
+                            element = document.createElement("video");
+                            element.setAttribute("controls", "controls");
+                            element.setAttribute("preload", "auto");
+                            element.setAttribute("src",uploadedVideo[i].converted);
+                            cell.appendChild(element);
+
                             if (i == uploadedVideo.length - 10) { break; } //only show last 10 uploads
                         }
                     }
@@ -149,21 +156,45 @@
 
             function onAfterVideoCapture(event){
                 if (event.response)  {
-                    postResponse(event.response);
+
+                    var mediaOp = {
+                        inputs: [JSON.parse(event.response)],
+                        command: "fixvideo",
+                        outputs: [{
+                            url: echoService + '/blob',
+                            headers: {"Content-Type": "multipart/form-data"}
+                        }]
+                    };
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", MEDIA_SERV + "/mux",false);
+                    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+                    xhr.send(JSON.stringify(mediaOp));
+                    if ("200" != xhr.status)  {
+                        document.getElementById("result").innerHTML = 
+                                "<span style='color:red'>Access Denied</span>";
+                        return;
+                    }
+                    var converted = JSON.parse(xhr.responseText);
+                    console.log("converted video " + converted.outputs[0]);
+
+                    postResponse(event.response, 
+                            JSON.parse(converted.outputs[0]));
                 }
+                updateVideoList();
             }
 
-            function postResponse(videoSrc) {
+            function postResponse(videoSrc, convertedSrc) {
                 xhr = new XMLHttpRequest();
-                xhr.open("POST", echoService + "list/videotest",false);
+                xhr.open("POST", echoService + "list/" + APP_NAME, false);
                 xhr.setRequestHeader("Content-type","application/json; charset=utf-8");
                 var video = {
                     video: videoSrc,
+                    converted: convertedSrc,
                     device: userDevice,
                     dateTime: getTimeInMST()
                 }
                 xhr.send(JSON.stringify(video));
-                bridgeit.push("videoTest", null);
             }
 
             function changeMimeType() {
