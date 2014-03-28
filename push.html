@@ -51,7 +51,7 @@
     </fieldset>
 
     <label for="pushGroup">Push Group: </label>
-    <span><input type="text" style="width:180px" id="pushGroup"></span>
+    <span><input type="text" style="width:180px" onchange="updateGroupName()" id="pushGroup"></span>
 
     <a id="regBtn" type="button" class="btn"
         onclick="bridgeit.register('_reg', 'handlePushRegistration');">Enable Cloud Push</a>
@@ -74,6 +74,10 @@
 
     if (bridgeit.isRegistered())  {
         document.getElementById('regBtn').style.display = 'none';
+    }
+
+    function updateGroupName()  {
+        bridgeit.addPushListener(document.getElementById("pushGroup").value);
     }
 
     function delayedPush()  {
@@ -168,7 +172,8 @@
                 serviceBase:"http://labs.icesoft.com/"});
         bridgeit.login("tomjones","secret");
         bridgeit.usePushService();
-        bridgeit.addPushListener(bridgeit.getId(), 'handlePush');
+        bridgeit.addPushListener(
+                document.getElementById("pushGroup").value, 'handlePush');
         cloudPushReady = true;
     }
     </script>
