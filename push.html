@@ -77,7 +77,8 @@
     }
 
     function updateGroupName()  {
-        bridgeit.addPushListener(document.getElementById("pushGroup").value);
+        bridgeit.addPushListener(
+                document.getElementById("pushGroup").value, 'handlePush');
     }
 
     function delayedPush()  {
