@@ -50,6 +50,9 @@
         </div>
     </fieldset>
 
+    <label for="pushGroup">Push Group: </label>
+    <span><input type="text" style="width:180px" id="pushGroup"></span>
+
     <a id="regBtn" type="button" class="btn"
         onclick="bridgeit.register('_reg', 'handlePushRegistration');">Enable Cloud Push</a>
 
@@ -65,12 +68,16 @@
     var PUSH_STORE_KEY = 'bridgeit.pushes';
     restoreNotifications();
 
+    if (!document.getElementById("pushGroup").value)  {
+        document.getElementById("pushGroup").value = bridgeit.getId();
+    }
+
     if (bridgeit.isRegistered())  {
         document.getElementById('regBtn').style.display = 'none';
     }
 
     function delayedPush()  {
-        bridgeit.push( bridgeit.getId(),
+        bridgeit.push( document.getElementById("pushGroup").value,
             {subject:'BridgeIt Cloud Push',
             detail:'You have been notified.', delay:10000,
             url: bridgeit.cloudPushReturnURL()} );
