@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+   <head>
+      <title>BridgeIt Code Service Test</title>
+       <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script>
+   </head>
+
+<body>
+
+    <script>
+    var CODE_SERV = "http://" + window.location.hostname + ":8000/";
+
+    function outputResults(obj)  {
+        var resultDiv = document.getElementById("result");
+        for (key in obj)  {
+            resultDiv.innerHTML += "<b>" + key + "</b> " +
+                obj[key] + "<br>"
+        }
+        resultDiv.innerHTML += "<br>";
+    }
+
+    function process(scriptname, scriptinput)  {
+        document.getElementById("result").innerHTML = "";
+
+        xhr = new XMLHttpRequest();
+        xhr.open("POST", CODE_SERV + "/testrealm/do/" + scriptname, false);
+        xhr.setRequestHeader('Content-type','text/plain; charset=utf-8');
+        xhr.send(scriptinput);
+        if ("200" != xhr.status)  {
+            document.getElementById("result").innerHTML = 
+                    "<span style='color:red'>Access Denied</span>";
+            return;
+        }
+        var codeResponse = JSON.parse(xhr.responseText);
+        outputResults(codeResponse);
+
+        return;
+    }
+
+    function submit(scriptname, scripttext)  {
+        document.getElementById("result").innerHTML = "";
+
+        xhr = new XMLHttpRequest();
+        xhr.open("POST", CODE_SERV + "/testrealm/scripts/" + scriptname, false);
+        xhr.setRequestHeader('Content-type','text/plain; charset=utf-8');
+        xhr.send(scripttext);
+        if ("200" != xhr.status)  {
+            document.getElementById("result").innerHTML = 
+                    "<span style='color:red'>Access Denied</span>";
+            return;
+        }
+        var submitResponse = JSON.parse(xhr.responseText);
+        outputResults(submitResponse);
+
+        return;
+    }
+
+    </script>
+
+    <input type="text" placeholder="Script Name">
+    <textarea rows="3" cols="40" placeholder="Script"></textarea>
+
+    <input type="button" value="Submit"  
+        onclick="submit(this.previousElementSibling.previousElementSibling.value, this.previousElementSibling.value);" >
+
+    <hr>
+
+    <input type="text" placeholder="Script Name" >
+    <textarea rows="3" cols="40" placeholder="Script Input"></textarea>
+
+    <input type="button" value="Process" 
+        onclick="process(this.previousElementSibling.previousElementSibling.value, this.previousElementSibling.value);" >
+
+    <div id="result">
+    </div>
+
+</body>
+</html>
