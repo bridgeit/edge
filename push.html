@@ -51,7 +51,13 @@
     </fieldset>
 
     <label for="pushGroup">Push Group: </label>
-    <span><input type="text" style="width:180px" onchange="updateGroupName()" id="pushGroup"></span>
+    <span><input type="text" style="width:180px" onchange="updateGroupName()" id="pushGroup"></span><br>
+
+    <label for="username">Username: </label>
+    <span><input type="text" style="width:180px" value="tomjones" id="username"></span><br>
+    <label for="password">Password: </label>
+    <span><input type="password" style="width:180px" value="secret" id="password"></span><br>
+    <span><input type="button" style="width:180px" onclick="login()" value="Login" id="loginButton"></span><br>
 
     <a id="regBtn" type="button" class="btn"
         onclick="bridgeit.register('_reg', 'handlePushRegistration');">Enable Cloud Push</a>
@@ -165,18 +171,34 @@
         document.getElementById('pushBtn').innerText = text;
     }
 
-    var cloudPushReady;
-    
-    if (!cloudPushReady)  {
+    function login()  {
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        
         bridgeit.useServices({
                 realm:"widgets.org",
                 serviceBase:"http://labs.icesoft.com/"});
-        bridgeit.login("tomjones","secret");
+        bridgeit.login(username, password);
         bridgeit.usePushService();
         bridgeit.addPushListener(
                 document.getElementById("pushGroup").value, 'handlePush');
         cloudPushReady = true;
     }
+
+    //will expand this test to start with automatic login
+    //and switch to user login
+//    var cloudPushReady;
+//    
+//    if (!cloudPushReady)  {
+//        bridgeit.useServices({
+//                realm:"widgets.org",
+//                serviceBase:"http://labs.icesoft.com/"});
+//        bridgeit.login("tomjones","secret");
+//        bridgeit.usePushService();
+//        bridgeit.addPushListener(
+//                document.getElementById("pushGroup").value, 'handlePush');
+//        cloudPushReady = true;
+//    }
     </script>
 
 </body>
