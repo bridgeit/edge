@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+    <head>
+        <title>Speech-to-Text using BridgeIt</title>
+        <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script>
+        <link href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" rel="stylesheet" type="text/css">
+        <style type="text/css">
+            #micBtn {width:165px;}
+        </style>
+    </head>
+
+    <body>
+        <script>
+            var MEDIA_SERV = "http://labs.icesoft.com/media/";
+            var ECHO_SERV = 'http://labs.icesoft.com/echo/';
+            var KEY = 'AIzaSyCnl6MRydhw_5fLXIdASxkLJzcJh5iX0M4';
+
+            function outputResults(obj)  {
+                var resultDiv = document.getElementById("result");
+                resultDiv.innerHTML += "<br>";
+                for (key in obj)  {
+                    resultDiv.innerHTML += "<b>" + key + "</b> " +
+                            obj[key] + "<br>"
+                }
+                resultDiv.innerHTML += "<br>";
+            }
+
+            function onAfterAudioCapture(event){
+                if (event.response)  {
+                    document.getElementById("result").innerHTML = "";
+
+                    var inputs = [];
+                    inputs.push(event.response);
+
+                    //output to google speech api v2
+                    var mediaOp = {
+                        inputs: inputs,
+                        command: "convertAudio",
+                        outputs: [{
+                            url: 'http://www.google.com/speech-api/v2/recognize?output=json&lang=en-us&key='+KEY,
+                            headers: {"Content-Type": "audio/x-flac; rate=44100;"},
+                            format: {type: "flac", ar: "44100"}
+                        }]
+                    };
+
+                    xhr = new XMLHttpRequest();
+                    xhr.open("POST", MEDIA_SERV, false);
+                    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+                    xhr.send(JSON.stringify(mediaOp));
+                    if ("200" != xhr.status)  {
+                        document.getElementById("result").innerHTML =
+                                "<span style='color:red'>Access Denied</span>";
+                        return;
+                    }
+                    var mediaResponse = JSON.parse(xhr.responseText);
+                    outputResults(mediaResponse);
+                }
+            }
+        </script>
+
+        <h3>Speech-to-Text using BridgeIt</h3>
+
+        <a id='micBtn' type="button" class="btn ui-btn ui-shadow ui-btn-corner-all ui-btn-up-c"
+           onclick="bridgeit.microphone('micBtn', 'onAfterAudioCapture', {postURL: ECHO_SERV+'blob'});">
+            <span class="ui-btn-inner">
+                <span class="ui-btn-text">Record Audio</span>
+            </span>
+        </a>
+
+        <hr>
+
+        <div id="result"></div>
+
+    </body>
+</html>
