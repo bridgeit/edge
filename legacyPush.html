@@ -71,6 +71,8 @@
     <fieldset id="notifications">
     </fieldset>
     <script type="text/javascript">
+    var pushService = "http://api.bridgeit.mobi/push/";
+    var apiKey = "197EBF31-40CD-444F-826F-10158A0F3581";
     var PUSH_STORE_KEY = 'bridgeit.pushes';
     restoreNotifications();
 
@@ -171,34 +173,12 @@
         document.getElementById('pushBtn').innerText = text;
     }
 
-    function login()  {
-        var username = document.getElementById('username').value;
-        var password = document.getElementById('password').value;
-        
-        bridgeit.useServices({
-                realm:"widgets.org",
-                serviceBase:"http://labs.icesoft.com/"});
-        bridgeit.login(username, password);
-        bridgeit.usePushService();
-        bridgeit.addPushListener(
-                document.getElementById("pushGroup").value, 'handlePush');
+    var cloudPushReady;
+    
+    if (!cloudPushReady)  {
+        bridgeit.usePushService(pushService, apiKey);
         cloudPushReady = true;
     }
-
-    //will expand this test to start with automatic login
-    //and switch to user login
-//    var cloudPushReady;
-//    
-//    if (!cloudPushReady)  {
-//        bridgeit.useServices({
-//                realm:"widgets.org",
-//                serviceBase:"http://labs.icesoft.com/"});
-//        bridgeit.login("tomjones","secret");
-//        bridgeit.usePushService();
-//        bridgeit.addPushListener(
-//                document.getElementById("pushGroup").value, 'handlePush');
-//        cloudPushReady = true;
-//    }
     </script>
 
 </body>
