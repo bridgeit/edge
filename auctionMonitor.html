@@ -66,10 +66,18 @@
     if (!document.getElementById("auctionNameField").value)  {
         document.getElementById("auctionNameField").value = auctionName;
     }
-    updateAuctionName(auctionName);
     if (!document.getElementById("userNameField").value)  {
         document.getElementById("userNameField").value = userName;
     }
+
+    var cloudPushReady;
+    
+    if (!cloudPushReady)  {
+        bridgeit.usePushService(pushService, apiKey);
+        cloudPushReady = true;
+    }
+
+    updateAuctionName(auctionName);
 
     restoreAuction();
 
@@ -160,12 +168,6 @@ console.log("received push");
         restoreAuction();
     }
 
-    var cloudPushReady;
-    
-    if (!cloudPushReady)  {
-        bridgeit.usePushService(pushService, apiKey);
-        cloudPushReady = true;
-    }
     </script>
 
 </body>
