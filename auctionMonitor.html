@@ -78,6 +78,7 @@
     }
 
     updateAuctionName(auctionName);
+    updateUserName(userName);
 
     restoreAuction();
 
@@ -87,6 +88,8 @@
 
     function updateUserName(newUserName)  {
         userName = newUserName;
+        bridgeit.addPushListener(userName, 'handleOutbid');
+
     }
 
     function addAuctionItem(itemName, itemValue)  {
@@ -104,6 +107,13 @@
             
         }
         xhr.send(JSON.stringify(auctionItem));
+        notifyBidHolder();
+    }
+
+    function notifyBidHolder()  {
+        xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://labs.icesoft.com/code/bridgeit-demo/api/bidNotify?auction=" + auctionName,false);
+        xhr.send();
     }
 
     function updateAuctionName(newAuctionName)  {
@@ -152,6 +162,10 @@
         }
         newHtml += "<input type='text'><button onclick='addAuctionItem(this.previousElementSibling.value)'>Add Item</button><br>";
         htmlOut.innerHTML = newHtml;
+    }
+
+    function handleOutbid()  {
+        alert("you were outbid");
     }
 
     var lastPushTimeStamp = 0;
