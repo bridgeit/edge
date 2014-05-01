@@ -42,17 +42,17 @@
         <div class="row"><p class="normalText">Auction bidding demonstrated with Echo Service Push and winning bid verified and notified by the Code Service.</p></div>
     </fieldset>
 
-    <label for="username">Auction Room: </label>
-    <span><input type="text" style="width:180px" onchange="updateAuctionName(this.value)" id="auctionNameField" placeholder="auction name"></span><br>
+    <label for="username" style='display:inline-block;min-width:80px'>Auction: </label>
+    <span><input type="text" style="width:80px" onchange="updateAuctionName(this.value)" id="auctionNameField" placeholder="auction name"></span><br>
 
-    <label for="username">UserName: </label>
-    <span><input type="text" style="width:180px" onchange="updateUserName(this.value)" id="userNameField"></span><br>
+    <label for="username" style='display:inline-block;min-width:80px'>User: </label>
+    <span><input type="text" style="width:80px" onchange="updateUserName(this.value)" id="userNameField"></span><br>
 
     <button id="regBtn"  
         onclick="bridgeit.register('_reg', 'handlePushRegistration');">Enable Cloud Push</button>
 
-
-    <fieldset id="auctionTable">
+    <br>
+    <fieldset style='width:auto;display:inline-block;' id="auctionTable">
     </fieldset>
     <script type="text/javascript">
     var pushService = "http://api.bridgeit.mobi/push/";
@@ -82,9 +82,9 @@
 
     restoreAuction();
 
-//    if (bridgeit.isRegistered())  {
-//        document.getElementById('regBtn').style.display = 'none';
-//    }
+    if (bridgeit.isRegistered())  {
+        document.getElementById('regBtn').style.display = 'none';
+    }
 
     function updateUserName(newUserName)  {
         userName = newUserName;
@@ -123,9 +123,9 @@
 
     function handlePushRegistration(event)  {
         console.log('handlePushRegistration() called, registered=' + bridgeit.isRegistered());
-      //  if (bridgeit.isRegistered())  {
-      //       document.getElementById('regBtn').style.display = 'none';
-      //  }
+        if (bridgeit.isRegistered())  {
+             document.getElementById('regBtn').style.display = 'none';
+        }
     }
 
     function restoreAuction()  {
@@ -158,9 +158,10 @@
                 "</span><input type='text' value='" + 
                 row.bid + "'><button onclick='addAuctionItem(\"" + 
                 row.item + 
-                "\", this.previousElementSibling.value)'>bid</button><br>";
+                "\", this.previousElementSibling.value)'>Bid</button><br>";
         }
-        newHtml += "<input type='text'><button onclick='addAuctionItem(this.previousElementSibling.value)'>Add Item</button><br>";
+        newHtml += "<hr>";
+        newHtml += "<div style='float:right'><input type='text'><button onclick='addAuctionItem(this.previousElementSibling.value)'>Add</button></div>";
         htmlOut.innerHTML = newHtml;
     }
 
