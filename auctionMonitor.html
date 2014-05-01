@@ -161,12 +161,17 @@
                 "\", this.previousElementSibling.value)'>Bid</button><br>";
         }
         newHtml += "<hr>";
+        newHtml += "<span style='color:white'>Outbid!</span>";
         newHtml += "<div style='float:right'><input type='text'><button onclick='addAuctionItem(this.previousElementSibling.value)'>Add</button></div>";
         htmlOut.innerHTML = newHtml;
     }
 
     function handleOutbid()  {
-        alert("you were outbid");
+        var theTable = document.getElementById("auctionTable");
+        theTable.style.backgroundColor = "orange";
+        setTimeout(function(){
+            theTable.style.backgroundColor = "orange";
+        }, 3000);
     }
 
     var lastPushTimeStamp = 0;
