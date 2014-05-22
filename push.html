@@ -178,7 +178,7 @@
         bridgeit.useServices({
                 realm:"edge",
                 serviceBase:"http://dev.bridgeit.io/"});
-        bridgeit.login(username, password);
+        window.bridgeitAuth = bridgeit.login(username, password);
         bridgeit.usePushService();
         bridgeit.addPushListener(
                 document.getElementById("pushGroup").value, 'handlePush');
