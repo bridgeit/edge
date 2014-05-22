@@ -176,7 +176,7 @@
         var password = document.getElementById('password').value;
         
         bridgeit.useServices({
-                realm:"push.test.realm",
+                realm:"edge",
                 serviceBase:"http://dev.bridgeit.io/"});
         window.bridgeitAuth = bridgeit.login(username, password);
         bridgeit.usePushService();
