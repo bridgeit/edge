@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Auction Monitor</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+      <link rel="icon" type="image/png" href="favicon.png"/>
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      
+      <link rel="stylesheet" href="http://bridgeit.github.io/demo-jqm/css/mobile.css" type="text/css" />
+
+      <!-- bridgeit.js UNSTABLE VERSION -->
+      <script type="text/javascript" src="http://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
+      <!-- bridgeit.js STABLE VERSION 
+      <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script -->
+
+      <script type="text/javascript" src="md5.min.js"></script>
+      <script type="text/javascript" src="phonetic.js"></script>
+      <!-- APP ICONS -->
+      <link rel="apple-touch-icon" href="images/touch-icon-iphone.png"/>
+      <link rel="apple-touch-icon" sizes="76x76" href="images/touch-icon-ipad.png"/>
+      <link rel="apple-touch-icon" sizes="120x120" href="images/touch-icon-iphone-retina.png"/>
+      <link rel="apple-touch-icon" sizes="152x152" href="images/touch-icon-ipad-retina.png"/>
+      <link rel="apple-touch-startup-image" href="images/touch-startup-image.png"/>
+
+      <script>
+         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+         ga('create', 'UA-45568600-1', 'bridgeit.mobi');
+         ga('send', 'pageview');
+
+      </script>
+      
+   </head>
+
+<body style="font-family:sans-serif">
+
+    <h2>Auction Monitor</h2>
+    <fieldset class="desc">
+        <div class="row"><p class="normalText">Auction bidding demonstrated with Echo Service Push and winning bid verified and notified by the Code Service.</p></div>
+    </fieldset>
+
+    <label for="username" style='display:inline-block;min-width:80px'>Auction: </label>
+    <span><input type="text" style="width:80px" onchange="updateAuctionName(this.value)" id="auctionNameField" placeholder="auction name"></span><br>
+
+    <label for="username" style='display:inline-block;min-width:80px'>User: </label>
+    <span><input type="text" style="width:80px" onchange="updateUserName(this.value)" id="userNameField"></span><br>
+
+    <button id="regBtn"  
+        onclick="bridgeit.register('_reg', 'handlePushRegistration');">Enable Cloud Push</button>
+
+    <br>
+    <fieldset style='width:auto;display:inline-block;' id="auctionTable">
+    </fieldset>
+    <script type="text/javascript">
+    var pushService = "http://api.bridgeit.mobi/push/";
+    var apiKey = "197EBF31-40CD-444F-826F-10158A0F3581";
+    var PUSH_STORE_KEY = 'bridgeit.pushes';
+    var date = new Date();
+    var hourStamp = date.getHours() + date.getDate() * 100 + date.getMonth() * 100 * 100
+    var auctionName = phonetic.generate({capFirst:0, seed: hourStamp});
+    var userName = phonetic.generate();
+
+    if (!document.getElementById("auctionNameField").value)  {
+        document.getElementById("auctionNameField").value = auctionName;
+    }
+    if (!document.getElementById("userNameField").value)  {
+        document.getElementById("userNameField").value = userName;
+    }
+
+    var cloudPushReady;
+    
+    if (!cloudPushReady)  {
+        bridgeit.usePushService(pushService, apiKey);
+        cloudPushReady = true;
+    }
+
+    updateAuctionName(auctionName);
+    updateUserName(userName);
+
+    restoreAuction();
+
+    if (bridgeit.isRegistered())  {
+        document.getElementById('regBtn').style.display = 'none';
+    }
+
+    function updateUserName(newUserName)  {
+        userName = newUserName;
+        bridgeit.addPushListener(userName, 'handleOutbid');
+
+    }
+
+    function addAuctionItem(itemName, itemValue)  {
+        console.log("addAuctionItem " + itemName + " " + itemValue);
+        if (!itemValue)  {
+            itemValue = 0;
+        }
+        xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://api.bridgeit.mobi/echo/list/" + auctionName,false);
+        xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+        var auctionItem = {
+            item: itemName,
+            bid: itemValue,
+            bidder: userName
+            
+        }
+        xhr.send(JSON.stringify(auctionItem));
+        notifyBidHolder();
+    }
+
+    function notifyBidHolder()  {
+        xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://labs.icesoft.com/code/bridgeit-demo/api/bidNotify?auction=" + auctionName,false);
+        xhr.send();
+    }
+
+    function updateAuctionName(newAuctionName)  {
+        auctionName = newAuctionName;
+        bridgeit.addPushListener(auctionName, 'handlePush');
+    }
+
+    function handlePushRegistration(event)  {
+        console.log('handlePushRegistration() called, registered=' + bridgeit.isRegistered());
+        if (bridgeit.isRegistered())  {
+             document.getElementById('regBtn').style.display = 'none';
+        }
+    }
+
+    function restoreAuction()  {
+        var bids;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://api.bridgeit.mobi/echo/list/" + auctionName,false);
+        xhr.send();
+        try {
+            bids = JSON.parse(xhr.responseText);
+        } catch (e) { };
+        var htmlOut = document.getElementById("auctionTable");
+        var newHtml = "";
+        var maxBids = { };
+        if (bids)  {
+            for (i = 0; i < bids.length; i++)  {
+                var itemName = bids[i].item;
+                var itemValue = parseInt(bids[i].bid);
+                if (!maxBids[itemName])  {
+                    maxBids[itemName] = bids[i];
+                } else {
+                    if (parseInt(maxBids[itemName].bid) < itemValue)  {
+                        maxBids[itemName] = bids[i];
+                    }
+                }
+            }
+        }
+        for (var index in maxBids)  {
+            var row = maxBids[index];
+            newHtml += "<span style='display:inline-block;min-width:60px'>" + row.item + 
+                "</span><input type='text' value='" + 
+                row.bid + "'><button onclick='addAuctionItem(\"" + 
+                row.item + 
+                "\", this.previousElementSibling.value)'>Bid</button><br>";
+        }
+        newHtml += "<hr>";
+        newHtml += "<span style='color:white'>Outbid!</span>";
+        newHtml += "<div style='float:right'><input type='text'><button onclick='addAuctionItem(this.previousElementSibling.value)'>Add</button></div>";
+        htmlOut.innerHTML = newHtml;
+    }
+
+    function handleOutbid()  {
+        var theTable = document.getElementById("auctionTable");
+        theTable.style.backgroundColor = "orange";
+        setTimeout(function(){
+            theTable.style.backgroundColor = "white";
+        }, 3000);
+    }
+
+    var lastPushTimeStamp = 0;
+    function handlePush()  {
+console.log("received push");
+        var now = new Date();
+        //an Ajax Push may be delivered but unacknowledged
+        //leading to duplication http://jira.icesoft.org/browse/PUSH-301
+        if (now.getTime() - lastPushTimeStamp < 600)  {
+            console.log("Debouncing duplicate push: " + 
+                    (now.getTime() - lastPushTimeStamp));
+            return;
+        }
+        restoreAuction();
+    }
+
+    </script>
+
+</body>
+</html>
