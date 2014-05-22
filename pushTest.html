@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html><script id="bug.surrogate.1">var urchinTracker=function(){},_gaq={push:function(){try {if(arguments[0][0]=='_link')window.location.href=arguments[0][1]}catch(er){}}},_gat={_createTracker:function(){}, _getTracker:function(){return{__noSuchMethod__:function(){},_link:function(o){if(o)location.href=o;},_linkByPost:function(){return true;},_getLinkerUrl:function(o){return o;},_trackEvent:function(){}}}};</script><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+      <title>Authorized Push</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+      <link rel="icon" type="image/png" href="http://bridgeit.github.io/edge/favicon.png">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      
+      <link rel="stylesheet" href="css/mobile.css" type="text/css">
+
+      <!-- bridgeit.js UNSTABLE VERSION -->
+      <script type="text/javascript" src="http://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
+      <!-- bridgeit.js STABLE VERSION 
+      <script type="text/javascript" src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script -->
+      
+      <!-- APP ICONS -->
+      <link rel="apple-touch-icon" href="http://bridgeit.github.io/edge/images/touch-icon-iphone.png">
+      <link rel="apple-touch-icon" sizes="76x76" href="http://bridgeit.github.io/edge/images/touch-icon-ipad.png">
+      <link rel="apple-touch-icon" sizes="120x120" href="http://bridgeit.github.io/edge/images/touch-icon-iphone-retina.png">
+      <link rel="apple-touch-icon" sizes="152x152" href="http://bridgeit.github.io/edge/images/touch-icon-ipad-retina.png">
+      <link rel="apple-touch-startup-image" href="http://bridgeit.github.io/edge/images/touch-startup-image.png">
+
+      <script>
+         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+         ga('create', 'UA-45568600-1', 'bridgeit.mobi');
+         ga('send', 'pageview');
+
+      </script>
+      
+   <style>#dyhssylpeukgtieuwrpnlmxisfspktymuqaaovwfb{border:solid 2px #fff !important;color:#fff !important;display:block !important;height:auto !important;margin:0 !important;opacity:0.9 !important;padding:7px 10px !important;position:fixed !important;visibility:visible !important;width:auto !important;z-index:2147483647 !important;-moz-border-radius:5px !important;border-radius:5px !important;-moz-box-shadow:0px 0px 20px #000 !important;box-shadow:0px 0px 20px #000 !important;}.dyhssylpeukgtieuwrpnlmxisfspktymuqaaovwfb-blocked{color:#777 !important;display:inline !important;text-decoration:line-through !important;}#dyhssylpeukgtieuwrpnlmxisfspktymuqaaovwfb span{background:transparent !important;}#dyhssylpeukgtieuwrpnlmxisfspktymuqaaovwfb div{border:0 !important;margin:0 !important;padding:0 !important;width:auto !important;letter-spacing:normal !important;font:13px Arial,Helvetica !important;text-align:left !important;text-shadow:none !important;text-transform:none !important;word-spacing:normal !important;}#dyhssylpeukgtieuwrpnlmxisfspktymuqaaovwfb a{font-weight:normal !important;background:none !important;text-decoration:underline !important;color:#fff !important;}@media print{#dyhssylpeukgtieuwrpnlmxisfspktymuqaaovwfb{display:none !important;}}</style></head>
+
+<body style="font-family:sans-serif">
+
+    <h2>Device Notifications</h2>
+    <fieldset class="desc">
+        <div class="row"><p class="normalText">Cloud Push provides 
+notification via Ajax when the web page is visible, and device 
+notifications (such as on the home screen) otherwise.</p></div>
+        <div class="row shown-xs">
+<div class="highlight"><pre><code class="javascript"><span class="nx">bridgeit</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">'myPushGroup'</span><span class="p">,</span> 
+ <span class="p">{</span><span class="nx">subject</span><span class="o">:</span> <span class="s1">'subject'</span><span class="p">,</span> 
+  <span class="nx">detail</span><span class="o">:</span> <span class="s1">'detail'</span><span class="p">});</span>
+</code></pre></div>
+        </div>
+       <div class="row hidden-xs">
+<div class="highlight"><pre><code class="javascript"><span class="nx">bridgeit</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">'myPushGroup'</span><span class="p">,</span> <span class="p">{</span><span class="nx">subject</span><span class="o">:</span> <span class="s1">'subject'</span><span class="p">,</span> <span class="nx">detail</span><span class="o">:</span> <span class="s1">'detail'</span><span class="p">});</span>
+</code></pre></div>
+        </div>
+    </fieldset>
+
+    <label for="pushGroup">Push Group: </label>
+    <span><input value="fae541c0-a590-4791-9bb8-4d41e4a03fe9" style="width:180px" onchange="updateGroupName()" id="pushGroup" type="text"></span><br>
+
+    <label for="username">Username: </label>
+    <span><input style="width:180px" value="tomjones" id="username" type="text"></span><br>
+    <label for="password">Password: </label>
+    <span><input style="width:180px" value="secret" id="password" type="password"></span><br>
+    <span><input style="width:180px" onclick="login()" value="Login" id="loginButton" type="button"></span><br>
+
+    <a id="regBtn" type="button" class="btn" onclick="bridgeit.register('_reg', 'handlePushRegistration');">Enable Cloud Push</a>
+
+    <a id="pushBtn" type="button" class="btn" onclick="delayedPush();">Push in 10 seconds ...</a>
+
+    <fieldset>
+        <div class="row"></div>
+    </fieldset>
+    <fieldset id="notifications">
+    </fieldset>
+    <script type="text/javascript">
+    var PUSH_STORE_KEY = 'bridgeit.pushes';
+    restoreNotifications();
+
+    if (!document.getElementById("pushGroup").value)  {
+        document.getElementById("pushGroup").value = bridgeit.getId();
+    }
+
+    if (bridgeit.isRegistered())  {
+        document.getElementById('regBtn').style.display = 'none';
+    }
+
+    function updateGroupName()  {
+        bridgeit.addPushListener(
+                document.getElementById("pushGroup").value, 'handlePush');
+    }
+
+    function delayedPush()  {
+        bridgeit.push( document.getElementById("pushGroup").value,
+            {subject:'BridgeIt Cloud Push',
+            detail:'You have been notified.', delay:10000,
+            url: bridgeit.cloudPushReturnURL()} );
+        updatePushButtonText('Waiting for push...');
+    }
+
+    function handlePushRegistration(event)  {
+        console.log('handlePushRegistration() called, registered=' + bridgeit.isRegistered());
+        if (bridgeit.isRegistered())  {
+            document.getElementById('regBtn').style.display = 'none';
+        }
+    }
+
+    function restoreNotifications()  {
+        var storedPush = getStoredNotifications();
+        if (!storedPush)  {
+            return;
+        }
+        var outDiv = document.getElementById("notifications");
+        for (var i = 0 ; i < storedPush.length ; i++)  {
+            var row = document.createElement("div");
+            row.innerHTML = storedPush[i];
+            outDiv.insertBefore(row, outDiv.firstChild);
+        }
+    }
+
+    var lastPushTimeStamp = 0;
+    function handlePush()  {
+        var now = new Date();
+        //an Ajax Push may be delivered but unacknowledged
+        //leading to duplication http://jira.icesoft.org/browse/PUSH-301
+        if (now.getTime() - lastPushTimeStamp < 600)  {
+            console.log("Debouncing duplicate push: " + 
+                    (now.getTime() - lastPushTimeStamp));
+            return;
+        }
+        lastPushTimeStamp = now.getTime();
+        var outDiv = document.getElementById("notifications");
+        var row = document.createElement("div");
+        if (row.classList)
+            row.classList.add('hl');
+        outDiv.insertBefore(row, outDiv.firstChild);
+        var rowMarkup = "<b>You were notified:</b> " + new Date();
+        storeNotification(rowMarkup);
+        row.innerHTML = rowMarkup;
+        window.setTimeout(function() {
+            if (row.classList)
+                row.classList.remove('hl');
+        }, 3000);
+        updatePushButtonText('Push in 10 seconds ...');
+    }
+
+    function getStoredNotifications()  {
+        var storedPush = [];
+        if (localStorage) {
+            var serializedPush = localStorage[PUSH_STORE_KEY];
+            if (serializedPush)  {
+                storedPush = JSON.parse(serializedPush);
+            }
+            if (!storedPush) {
+                storedPush = [];
+            }
+        }
+        return storedPush;
+    }
+
+    function storeNotification(text)  {
+        if (localStorage) {
+            var storedPush = getStoredNotifications();
+            if (storedPush.length > 3)  {
+                //remove oldest entries, but keep 3
+                storedPush.splice(0, storedPush.length - 3);
+            }
+            storedPush.push(text);
+            localStorage[PUSH_STORE_KEY] = JSON.stringify(storedPush);
+        }
+    }
+
+    function updatePushButtonText(text){
+        document.getElementById('pushBtn').innerText = text;
+    }
+
+    function login()  {
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        
+        bridgeit.useServices({
+                realm:"push.test.realm",
+                serviceBase:"http://54.201.2.84/"});
+        bridgeit.login(username, password);
+        bridgeit.usePushService();
+        bridgeit.addPushListener(
+                document.getElementById("pushGroup").value, 'handlePush');
+        cloudPushReady = true;
+    }
+
+    //will expand this test to start with automatic login
+    //and switch to user login
+//    var cloudPushReady;
+//    
+//    if (!cloudPushReady)  {
+//        bridgeit.useServices({
+//                realm:"widgets.org",
+//                serviceBase:"http://labs.icesoft.com/"});
+//        bridgeit.login("tomjones","secret");
+//        bridgeit.usePushService();
+//        bridgeit.addPushListener(
+//                document.getElementById("pushGroup").value, 'handlePush');
+//        cloudPushReady = true;
+//    }
+    </script>
+
+
+
+</body></html>
