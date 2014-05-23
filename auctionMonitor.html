@@ -39,15 +39,19 @@
 
     <h2>Auction Monitor</h2>
     <fieldset class="desc">
-        <div class="row"><p class="normalText">Auction bidding demonstrated with Echo Service Push and winning bid verified and notified by the Code Service.</p></div>
+        <div class="row"><p class="normalText">Auction bidding demonstrated with Doc Service, Code Service, and Push Service.</p></div>
     </fieldset>
 
-    <label for="username" style='display:inline-block;min-width:80px'>Auction: </label>
+    <label for="auctionNameField" style='display:inline-block;min-width:80px'>Auction: </label>
     <span><input type="text" style="width:80px" onchange="updateAuctionName(this.value)" id="auctionNameField" placeholder="auction name"></span><br>
 
-    <label for="username" style='display:inline-block;min-width:80px'>User: </label>
-    <span><input type="text" style="width:80px" onchange="updateUserName(this.value)" id="userNameField"></span><br>
+    <label for="usernameField" style='display:inline-block;min-width:80px'>User: </label>
+    <span><input type="text" style="width:80px" onchange="updateUserName(this.value)" id="usernameField"></span><br>
+    <label for="passwordField" style='display:inline-block;min-width:80px'>Password: </label>
+    <span><input type="text" style="width:80px" onchange="updateUserName(this.value)" id="passwordField"></span><br>
 
+    <button id="loginButton"  
+        onclick="login();">Login</button>
     <button id="regBtn"  
         onclick="bridgeit.register('_reg', 'handlePushRegistration');">Enable Cloud Push</button>
 
@@ -55,8 +59,8 @@
     <fieldset style='width:auto;display:inline-block;' id="auctionTable">
     </fieldset>
     <script type="text/javascript">
-    var pushService = "http://api.bridgeit.mobi/push/";
-    var apiKey = "197EBF31-40CD-444F-826F-10158A0F3581";
+    var SERVICE = "http://dev.bridgeit.io/";
+    var access_token = "cafebabe-cafe-4c92-beef-cafebabebeef";
     var PUSH_STORE_KEY = 'bridgeit.pushes';
     var date = new Date();
     var hourStamp = date.getHours() + date.getDate() * 100 + date.getMonth() * 100 * 100
@@ -66,17 +70,12 @@
     if (!document.getElementById("auctionNameField").value)  {
         document.getElementById("auctionNameField").value = auctionName;
     }
-    if (!document.getElementById("userNameField").value)  {
-        document.getElementById("userNameField").value = userName;
+    if (!document.getElementById("usernameField").value)  {
+        document.getElementById("usernameField").value = userName;
     }
 
     var cloudPushReady;
     
-    if (!cloudPushReady)  {
-        bridgeit.usePushService(pushService, apiKey);
-        cloudPushReady = true;
-    }
-
     updateAuctionName(auctionName);
     updateUserName(userName);
 
@@ -98,13 +97,13 @@
             itemValue = 0;
         }
         xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://api.bridgeit.mobi/echo/list/" + auctionName,false);
+        xhr.open("POST", SERVICE + "docs/edge/documents?access_token=" + access_token,false);
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         var auctionItem = {
+            auction: auctionName,
             item: itemName,
             bid: itemValue,
             bidder: userName
-            
         }
         xhr.send(JSON.stringify(auctionItem));
         notifyBidHolder();
@@ -112,7 +111,7 @@
 
     function notifyBidHolder()  {
         xhr = new XMLHttpRequest();
-        xhr.open("GET", "http://labs.icesoft.com/code/bridgeit-demo/api/bidNotify?auction=" + auctionName,false);
+        xhr.open("GET", SERVICE + "/code/bridgeit-demo/api/bidNotify?auction=" + auctionName,false);
         xhr.send();
     }
 
@@ -131,7 +130,8 @@
     function restoreAuction()  {
         var bids;
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "http://api.bridgeit.mobi/echo/list/" + auctionName,false);
+        xhr.open("GET", SERVICE + "docs/edge/documents?access_token=" + access_token +
+            "&query=" + encodeURIComponent(JSON.stringify({auction:auctionName})),false);
         xhr.send();
         try {
             bids = JSON.parse(xhr.responseText);
@@ -164,6 +164,19 @@
         newHtml += "<span style='color:white'>Outbid!</span>";
         newHtml += "<div style='float:right'><input type='text'><button onclick='addAuctionItem(this.previousElementSibling.value)'>Add</button></div>";
         htmlOut.innerHTML = newHtml;
+    }
+
+    function login()  {
+        var username = document.getElementById('usernameField').value;
+        var password = document.getElementById('passwordField').value;
+        
+        bridgeit.useServices({
+                realm:"edge",
+                serviceBase:SERVICE});
+        window.bridgeitAuth = bridgeit.login(username, password);
+        bridgeit.usePushService();
+        bridgeit.addPushListener(auctionName, 'handlePush');
+        cloudPushReady = true;
     }
 
     function handleOutbid()  {
