@@ -98,7 +98,7 @@
             itemValue = 0;
         }
         xhr = new XMLHttpRequest();
-        xhr.open("POST", SERVICE + "docs/edge/documents?access_token=" + access_token,false);
+        xhr.open("POST", SERVICE + "/docs/edge/documents?access_token=" + access_token,false);
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         var auctionItem = {
             auction: auctionName,
@@ -116,7 +116,7 @@
             itemValue = 0;
         }
         xhr = new XMLHttpRequest();
-        xhr.open("POST", SERVICE + "code/edge/bid?access_token=" + access_token,false);
+        xhr.open("POST", SERVICE + "/code/edge/bid?access_token=" + access_token,false);
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         var auctionItem = {
             auction: auctionName,
@@ -148,7 +148,7 @@
     function restoreAuction()  {
         var bids;
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", SERVICE + "docs/edge/documents?access_token=" + access_token +
+        xhr.open("GET", SERVICE + "/docs/edge/documents?access_token=" + access_token +
             "&query=" + encodeURIComponent(JSON.stringify({auction:auctionName})),false);
         xhr.send();
         try {
