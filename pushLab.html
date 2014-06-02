@@ -60,6 +60,7 @@
     var access_token = "cafebabe-cafe-4c92-beef-cafebabebeef";
     var auth = null;
     var PUSH_STORE_KEY = 'bridgeit.pushes';
+    var DOC_OP = 'PUT';
     var date = new Date();
     var hourStamp = date.getHours() + date.getDate() * 100 + date.getMonth() * 100 * 100
 
@@ -86,16 +87,16 @@
     function setInfo(field)  {
         console.log("changeInfo " + field.value);
         xhr = new XMLHttpRequest();
-        xhr.open("POST", SERVICE + "/docs/edge/documents/pushLab-" + userName +  
+        xhr.open(DOC_OP, SERVICE + "/docs/edge/documents/pushLab-" + userName +  
             "?access_token=" + access_token,false);
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         var userInfo = {
             type: "pushLab",
             username: userName,
             A: document.getElementById("AField").value,
-            B: document.getElementById("AField").value,
-            C: document.getElementById("AField").value,
-            D: document.getElementById("AField").value
+            B: document.getElementById("BField").value,
+            C: document.getElementById("CField").value,
+            D: document.getElementById("DField").value
         }
         xhr.send(JSON.stringify(userInfo));
     }
@@ -121,12 +122,14 @@
         xhr.send();
         try {
             info = JSON.parse(xhr.responseText);
+            document.getElementById("AField").value = info.A;
+            document.getElementById("BField").value = info.B;
+            document.getElementById("CField").value = info.C;
+            document.getElementById("DField").value = info.D;
+            DOC_OP = "POST";
+console.log("change from PUT to POST until Doc Service changed");
         } catch (e) { };
         
-        document.getElementById("AField").value = info.A;
-        document.getElementById("BField").value = info.B;
-        document.getElementById("CField").value = info.C;
-        document.getElementById("DField").value = info.D;
     }
 
     function login()  {
