@@ -122,7 +122,7 @@
             "?access_token=" + access_token,false);
         xhr.send();
         try {
-            info = JSON.parse(xhr.responseText);
+            info = JSON.parse(xhr.responseText)[0];
 console.log(info);
             if ("pushLab" == info.type)  {
                document.getElementById("AField").value = info.A;
