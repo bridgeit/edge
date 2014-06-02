@@ -122,12 +122,14 @@
         xhr.send();
         try {
             info = JSON.parse(xhr.responseText);
-            document.getElementById("AField").value = info.A;
-            document.getElementById("BField").value = info.B;
-            document.getElementById("CField").value = info.C;
-            document.getElementById("DField").value = info.D;
-            DOC_OP = "POST";
+            if ("pushLab" == info.type)  {
+               document.getElementById("AField").value = info.A;
+               document.getElementById("BField").value = info.B;
+               document.getElementById("CField").value = info.C;
+               document.getElementById("DField").value = info.D;
+               DOC_OP = "POST";
 console.log("change from PUT to POST until Doc Service changed");
+            }
         } catch (e) { };
         
     }
