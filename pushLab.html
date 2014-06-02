@@ -86,10 +86,14 @@
 
     function setInfo(field)  {
         console.log("changeInfo " + field.value);
+var extra_options = "";
+if ("PUT" == DOC_OP)  {
+   extra_options =  "&options=" + encodeURIComponent(JSON.stringify({upsert:true}));
+}
         xhr = new XMLHttpRequest();
         xhr.open(DOC_OP, SERVICE + "/docs/edge/documents/pushLab-" + userName +  
             "?access_token=" + access_token
-+ "&options=" + encodeURIComponent(JSON.stringify({upsert:true})),false);
++ extra_options,false);
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         var userInfo = {
             type: "pushLab",
