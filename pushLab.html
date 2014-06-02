@@ -123,6 +123,7 @@
         xhr.send();
         try {
             info = JSON.parse(xhr.responseText);
+console.log(info);
             if ("pushLab" == info.type)  {
                document.getElementById("AField").value = info.A;
                document.getElementById("BField").value = info.B;
