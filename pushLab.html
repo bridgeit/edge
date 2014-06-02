@@ -109,7 +109,7 @@
         }
     }
 
-    function restoreAuction()  {
+    function getInfo()  {
         var info;
         var xhr = new XMLHttpRequest();
         xhr.open("GET", SERVICE + "/docs/edge/documents?access_token=" + access_token +
@@ -137,6 +137,7 @@
         bridgeit.addPushListener(username, 'handlePush');
         access_token = auth.access_token;
         cloudPushReady = true;
+        getInfo();
     }
 
     var lastPushTimeStamp = 0;
@@ -150,7 +151,19 @@ console.log("received push");
                     (now.getTime() - lastPushTimeStamp));
             return;
         }
-    }
+         var outDiv = document.getElementById("notifications");
+        var row = document.createElement("div");
+        if (row.classList)
+            row.classList.add('hl');
+        outDiv.insertBefore(row, outDiv.firstChild);
+        var rowMarkup = "<b>You were notified:</b> " + new Date();
+        storeNotification(rowMarkup);
+        row.innerHTML = rowMarkup;
+        window.setTimeout(function() {
+            if (row.classList)
+                row.classList.remove('hl');
+        }, 3000);
+   }
 
     </script>
 
