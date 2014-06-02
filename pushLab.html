@@ -88,7 +88,8 @@
         console.log("changeInfo " + field.value);
         xhr = new XMLHttpRequest();
         xhr.open(DOC_OP, SERVICE + "/docs/edge/documents/pushLab-" + userName +  
-            "?access_token=" + access_token,false);
+            "?access_token=" + access_token
++ "&options=" + encodeURIComponent(JSON.stringify({upsert:true})),false);
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         var userInfo = {
             type: "pushLab",
