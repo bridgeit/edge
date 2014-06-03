@@ -49,6 +49,7 @@
     <button id="loginButton" onclick="login();">Login</button>
     <button id="regBtn"  
         onclick="bridgeit.register('_reg', 'handlePushRegistration');">Enable Cloud Push</button>
+    <button id="pushButton" onclick="push();">Push</button>
 
     <br>
 
@@ -93,7 +94,7 @@ if ("PUT" == DOC_OP)  {
         xhr = new XMLHttpRequest();
         xhr.open(DOC_OP, SERVICE + "/docs/edge/documents/pushFlow-" + userName +  
             "?access_token=" + access_token
-+ extra_options,false);
++ extra_options, true);
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         var userInfo = {
             type: "pushFlow",
@@ -106,9 +107,9 @@ if ("PUT" == DOC_OP)  {
         xhr.send(JSON.stringify(userInfo));
     }
 
-    function notifyBidHolder()  {
+    function push()  {
         xhr = new XMLHttpRequest();
-        xhr.open("GET", SERVICE + "/code/bridgeit-demo/api/bidNotify?auction=" + auctionName,false);
+        xhr.open("POST", SERVICE + "/code/edge/pushFlow", true);
         xhr.send();
     }
 
@@ -123,7 +124,7 @@ if ("PUT" == DOC_OP)  {
         var info;
         var xhr = new XMLHttpRequest();
         xhr.open("GET", SERVICE + "/docs/edge/documents/pushFlow-" + userName + 
-            "?access_token=" + access_token,false);
+            "?access_token=" + access_token, false);
         xhr.send();
         try {
             info = JSON.parse(xhr.responseText)[0];
@@ -152,7 +153,7 @@ console.log("change from PUT to POST until Doc Service changed");
         bridgeit.addPushListener(username, 'handlePush');
         access_token = auth.access_token;
         cloudPushReady = true;
-        getInfo();
+        setTimeout(getInfo, 0);
     }
 
     var lastPushTimeStamp = 0;
