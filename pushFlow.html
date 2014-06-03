@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <title>Push Lab</title>
+      <title>Push Flow</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
       <link rel="icon" type="image/png" href="favicon.png"/>
       <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -28,7 +28,7 @@
 
 <body style="font-family:sans-serif">
 
-    <h2>Push Lab</h2>
+    <h2>Push Flow</h2>
     <fieldset class="desc">
         <div class="row"><p class="normalText">Flexible Push with the BridgeIt Code Service.</p></div>
     </fieldset>
@@ -64,7 +64,7 @@
     var date = new Date();
     var hourStamp = date.getHours() + date.getDate() * 100 + date.getMonth() * 100 * 100
 
-    var userName = "auctioneer";
+    var userName = "user1";
 
     if (!document.getElementById("usernameField").value)  {
         document.getElementById("usernameField").value = userName;
@@ -91,12 +91,12 @@ if ("PUT" == DOC_OP)  {
    extra_options =  "&options=" + encodeURIComponent(JSON.stringify({upsert:true}));
 }
         xhr = new XMLHttpRequest();
-        xhr.open(DOC_OP, SERVICE + "/docs/edge/documents/pushLab-" + userName +  
+        xhr.open(DOC_OP, SERVICE + "/docs/edge/documents/pushFlow-" + userName +  
             "?access_token=" + access_token
 + extra_options,false);
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         var userInfo = {
-            type: "pushLab",
+            type: "pushFlow",
             username: userName,
             A: document.getElementById("AField").value,
             B: document.getElementById("BField").value,
@@ -122,13 +122,13 @@ if ("PUT" == DOC_OP)  {
     function getInfo()  {
         var info;
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", SERVICE + "/docs/edge/documents/pushLab-" + userName + 
+        xhr.open("GET", SERVICE + "/docs/edge/documents/pushFlow-" + userName + 
             "?access_token=" + access_token,false);
         xhr.send();
         try {
             info = JSON.parse(xhr.responseText)[0];
 console.log(info);
-            if ("pushLab" == info.type)  {
+            if ("pushFlow" == info.type)  {
                document.getElementById("AField").value = info.A;
                document.getElementById("BField").value = info.B;
                document.getElementById("CField").value = info.C;
