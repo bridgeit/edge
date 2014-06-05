@@ -173,7 +173,6 @@ console.log("received push");
             row.classList.add('hl');
         outDiv.insertBefore(row, outDiv.firstChild);
         var rowMarkup = "<b>You were notified:</b> " + new Date();
-        storeNotification(rowMarkup);
         row.innerHTML = rowMarkup;
         window.setTimeout(function() {
             if (row.classList)
