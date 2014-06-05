@@ -157,22 +157,26 @@ console.log("change from PUT to POST until Doc Service changed");
     }
 
     var lastPushTimeStamp = 0;
+    var lastRow;
     function handlePush()  {
 console.log("received push");
         var now = new Date();
-        //an Ajax Push may be delivered but unacknowledged
+         var rowMarkup = "<b>You were notified:</b> " + now;
+       //an Ajax Push may be delivered but unacknowledged
         //leading to duplication http://jira.icesoft.org/browse/PUSH-301
         if (now.getTime() - lastPushTimeStamp < 600)  {
             console.log("Debouncing duplicate push: " + 
                     (now.getTime() - lastPushTimeStamp));
+            lastRow.innerHTML += " dup!";
             return;
         }
-         var outDiv = document.getElementById("notifications");
+        lastPushTimeStamp = now;
+        var outDiv = document.getElementById("notifications");
         var row = document.createElement("div");
+        lastRow = row;
         if (row.classList)
             row.classList.add('hl');
         outDiv.insertBefore(row, outDiv.firstChild);
-        var rowMarkup = "<b>You were notified:</b> " + new Date();
         row.innerHTML = rowMarkup;
         window.setTimeout(function() {
             if (row.classList)
