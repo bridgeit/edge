@@ -77,9 +77,6 @@
 
     var cloudPushReady;
     
-    updateAuctionName(auctionName);
-    updateUserName(userName);
-
     restoreAuction();
 
     if (bridgeit.isRegistered())  {
@@ -89,7 +86,6 @@
     function updateUserName(newUserName)  {
         userName = newUserName;
         bridgeit.addPushListener(userName, 'handleOutbid');
-
     }
 
     function addAuctionItem(itemName, itemValue)  {
