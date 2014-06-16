@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script type="text/javascript" src="http://bridgeit.github.io/bridgeit.js/src/bridgeit.js"></script>
+   </head>
+    <body>
+<script>
+    var SERVICE = "http://dev.bridgeit.io";
+
+    function handlePush()  {
+        console.log("push received");
+    }
+
+    function login(username, password)  {
+        bridgeit.useServices({
+                realm:"edge",
+                serviceBase:SERVICE});
+        auth = bridgeit.login(username, password);
+        bridgeit.usePushService();
+        bridgeit.addPushListener("rawpush", 'handlePush');
+    }
+</script>
+    <body>
+</html>
