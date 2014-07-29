@@ -166,7 +166,8 @@ console.log("change from PUT to POST until Doc Service changed");
             "&query=" + 
             encodeURIComponent(JSON.stringify({
                type:"pushFlowMessage",
-               username:userName})),false);
+               username:userName,
+               timestamp: {$gt: receivedMessage} })),false);
         xhr.send();
         try {
             messages = JSON.parse(xhr.responseText);
@@ -213,7 +214,7 @@ console.log("received push");
         var newMessages = getMessages();
 console.log(newMessages);
         var now = new Date();
-         var rowMarkup = newMessages[0].message + now;
+         var rowMarkup = newMessages[0].message + " " + now;
        //an Ajax Push may be delivered but unacknowledged
         //leading to duplication http://jira.icesoft.org/browse/PUSH-301
         if (now.getTime() - lastPushTimeStamp < 600)  {
