@@ -69,6 +69,8 @@
     var hourStamp = date.getHours() + date.getDate() * 100 + date.getMonth() * 100 * 100
 
     var userName = "user1";
+    
+    var pushMessage = "";
 
     if (!document.getElementById("usernameField").value)  {
         document.getElementById("usernameField").value = userName;
@@ -87,6 +89,10 @@
         bridgeit.addPushListener(userName, 'handleOutbid');
 
     }
+
+   function updatePushMessage(newPushMessage)  {
+      pushMessage = newPushMessage;
+   }
 
     function setInfo(field)  {
         console.log("changeInfo " + field.value);
@@ -113,7 +119,11 @@ if ("PUT" == DOC_OP)  {
     function push()  {
         xhr = new XMLHttpRequest();
         xhr.open("POST", SERVICE + "/code/edge/pushFlow", true);
-        xhr.send();
+        xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+        var pushDetails = {
+            pushMessage: pushMessage
+        }
+        xhr.send(JSON.stringify(pushDetails));
     }
 
     function handlePushRegistration(event)  {
