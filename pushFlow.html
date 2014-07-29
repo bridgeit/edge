@@ -221,28 +221,29 @@ console.log("received push");
             lastRow.innerHTML += " dup!";
             return;
         }
+        lastPushTimeStamp = now;
 
         var newMessages = getMessages();
 console.log(newMessages);
         for (i = 0; i < newMessages.length; i++)  {
             var newMessage = newMessages[i];
-            var rowMarkup = newMessage.message + " " + now;
-            lastPushTimeStamp = now;
-            var outDiv = document.getElementById("notifications");
-            var row = document.createElement("div");
-            lastRow = row;
-            if (row.classList)
-               row.classList.add('hl');
-            outDiv.insertBefore(row, outDiv.firstChild);
-            row.innerHTML = rowMarkup;
-            window.setTimeout(function() {
-console.log("removing highlight");
-               if (row.classList)
-                   row.classList.remove('hl');
-            }, 3000);
+            flashRow(newMessage.message);
         }
    }
 
+   function flashRow(text)  {
+       var rowMarkup = text + " " + (new Date());
+       var outDiv = document.getElementById("notifications");
+       var row = document.createElement("div");
+       if (row.classList)
+           row.classList.add('hl');
+       outDiv.insertBefore(row, outDiv.firstChild);
+       row.innerHTML = rowMarkup;
+       window.setTimeout(function() {
+          if (row.classList)
+              row.classList.remove('hl');
+          }, 3000);
+   }
     </script>
 
 </body>
