@@ -176,6 +176,7 @@ console.log("change from PUT to POST until Doc Service changed");
             for (i = 0; i < messages.length; i++)  {
                 var msgMessage = messages[i].message;
                 var msgTimestamp = messages[i].timestamp;
+console.log(msgMessage + " " + msgTimestamp + "vs " + receivedMessage);
                 if (msgTimestamp > receivedMessage)  {
                    console.log("MESSAGE " + msgMessage);
                    receivedMessage  = msgTimestamp;
