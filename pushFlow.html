@@ -211,11 +211,8 @@ console.log(msgMessage + " " + msgTimestamp + "vs " + receivedMessage);
     var lastPushTimeStamp = 0;
     var lastRow;
     function handlePush()  {
-console.log("received push");
-        var newMessages = getMessages();
-console.log(newMessages);
         var now = new Date();
-         var rowMarkup = newMessages[0].message + " " + now;
+console.log("received push");
        //an Ajax Push may be delivered but unacknowledged
         //leading to duplication http://jira.icesoft.org/browse/PUSH-301
         if (now.getTime() - lastPushTimeStamp < 600)  {
@@ -224,18 +221,25 @@ console.log(newMessages);
             lastRow.innerHTML += " dup!";
             return;
         }
-        lastPushTimeStamp = now;
-        var outDiv = document.getElementById("notifications");
-        var row = document.createElement("div");
-        lastRow = row;
-        if (row.classList)
-            row.classList.add('hl');
-        outDiv.insertBefore(row, outDiv.firstChild);
-        row.innerHTML = rowMarkup;
-        window.setTimeout(function() {
+
+        var newMessages = getMessages();
+console.log(newMessages);
+        for (i = 0; i < newMessages.length; i++)  {
+            var newMessage = newMessages[i];
+            var rowMarkup = newMessage.message + " " + now;
+            lastPushTimeStamp = now;
+            var outDiv = document.getElementById("notifications");
+            var row = document.createElement("div");
+            lastRow = row;
             if (row.classList)
-                row.classList.remove('hl');
-        }, 3000);
+               row.classList.add('hl');
+            outDiv.insertBefore(row, outDiv.firstChild);
+            row.innerHTML = rowMarkup;
+            window.setTimeout(function() {
+               if (row.classList)
+                   row.classList.remove('hl');
+            }, 3000);
+        }
    }
 
     </script>
