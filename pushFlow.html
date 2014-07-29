@@ -71,6 +71,7 @@
     var userName = "user1";
     
     var pushMessage = "";
+    var receivedMessage = 0;
 
     if (!document.getElementById("usernameField").value)  {
         document.getElementById("usernameField").value = userName;
@@ -167,6 +168,16 @@ console.log("change from PUT to POST until Doc Service changed");
             messages = JSON.parse(xhr.responseText);
         } catch (e) { };
         console.log(messages);
+        if (messages)  {
+            for (i = 0; i < messages.length; i++)  {
+                var msgMessage = messages[i].message;
+                var msgTimestamp = messages[i].timestamp;
+                if (msgTimestamp > receivedMessage)  {
+                   console.log("MESSAGE " + msgMessage);
+                   receivedMessage  = msgTimeStamp;
+                }
+            }
+        }
     }
 
     function login()  {
@@ -188,6 +199,7 @@ console.log("change from PUT to POST until Doc Service changed");
     var lastRow;
     function handlePush()  {
 console.log("received push");
+        getMessages();
         var now = new Date();
          var rowMarkup = "<b>You were notified:</b> " + now;
        //an Ajax Push may be delivered but unacknowledged
