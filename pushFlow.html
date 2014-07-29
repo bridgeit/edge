@@ -236,6 +236,7 @@ console.log(newMessages);
             outDiv.insertBefore(row, outDiv.firstChild);
             row.innerHTML = rowMarkup;
             window.setTimeout(function() {
+console.log("removing highlight");
                if (row.classList)
                    row.classList.remove('hl');
             }, 3000);
