@@ -72,7 +72,7 @@
     
     var pushMessage = "";
     var receivedMessage = 0;
-    if (localStorage)  {
+    if (localStorage && localStorage.receivedMessage)  {
        receivedMessage = localStorage.receivedMessage;
     }
 
