@@ -167,7 +167,8 @@ console.log("change from PUT to POST until Doc Service changed");
             encodeURIComponent(JSON.stringify({
                type:"pushFlowMessage",
                username:userName,
-               timestamp: {$gt: receivedMessage} })),false);
+//               timestamp: {$gt: receivedMessage} 
+            })),false);
         xhr.send();
         try {
             messages = JSON.parse(xhr.responseText);
