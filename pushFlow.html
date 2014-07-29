@@ -72,6 +72,9 @@
     
     var pushMessage = "";
     var receivedMessage = 0;
+    if (localStorage)  {
+       receivedMessage = localStorage.receivedMessage;
+    }
 
     if (!document.getElementById("usernameField").value)  {
         document.getElementById("usernameField").value = userName;
@@ -156,7 +159,8 @@ console.log("change from PUT to POST until Doc Service changed");
     }
 
     function getMessages()  {
-        var bids;
+        var messages;
+        var newMessages = [];
         var xhr = new XMLHttpRequest();
         xhr.open("GET", SERVICE + "/docs/edge/documents?access_token=" + access_token +
             "&query=" + 
@@ -175,9 +179,15 @@ console.log("change from PUT to POST until Doc Service changed");
                 if (msgTimestamp > receivedMessage)  {
                    console.log("MESSAGE " + msgMessage);
                    receivedMessage  = msgTimestamp;
+                   newMessages.push(messages[i]);
                 }
             }
         }
+
+        if (localStorage)  {
+            localStorage.receivedMessage = receivedMessage;
+        }
+        return newMessages;
     }
 
     function login()  {
@@ -199,9 +209,9 @@ console.log("change from PUT to POST until Doc Service changed");
     var lastRow;
     function handlePush()  {
 console.log("received push");
-        getMessages();
+        var newMessages = getMessages();
         var now = new Date();
-         var rowMarkup = "<b>You were notified:</b> " + now;
+         var rowMarkup = newMessages[0].message + now;
        //an Ajax Push may be delivered but unacknowledged
         //leading to duplication http://jira.icesoft.org/browse/PUSH-301
         if (now.getTime() - lastPushTimeStamp < 600)  {
