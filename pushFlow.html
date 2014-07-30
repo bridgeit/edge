@@ -228,12 +228,12 @@ console.log("received push");
 console.log(newMessages);
         for (i = 0; i < newMessages.length; i++)  {
             var newMessage = newMessages[i];
-            flashRow(newMessage.message);
+            flashRow(newMessage.message + " " (new Date(newMessage.timestamp)));
         }
    }
 
    function flashRow(text)  {
-       var rowMarkup = text + " " + (new Date());
+       var rowMarkup = text;
        var outDiv = document.getElementById("notifications");
        var row = document.createElement("div");
        if (row.classList)
