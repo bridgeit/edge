@@ -72,7 +72,7 @@
     
     var pushMessage = "";
     //allow any messages within the last 10 minutes
-    var receivedMessage = (new Date()).getTime() - (10 * 60 * 60 * 1000);
+    var receivedMessage = (new Date()).getTime() - (10 * 60 * 1000);
     if (localStorage && localStorage.receivedMessage)  {
        receivedMessage = localStorage.receivedMessage;
     }
