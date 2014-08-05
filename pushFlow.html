@@ -206,7 +206,7 @@ console.log(msgMessage + " " + msgTimestamp + "vs " + receivedMessage);
         bridgeit.addPushListener(username, 'handlePush');
         access_token = auth.access_token;
         cloudPushReady = true;
-        setTimeout(getInfo, 0);
+        auth.then(getInfo, function(){console.log("auth failed")});
     }
 
     var lastPushTimeStamp = 0;
