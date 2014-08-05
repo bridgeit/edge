@@ -107,7 +107,7 @@ if ("PUT" == DOC_OP)  {
 }
         xhr = new XMLHttpRequest();
         xhr.open(DOC_OP, SERVICE + "/docs/edge/documents/pushFlow-" + userName +  
-            "?access_token=" + access_token
+            "?access_token=" + auth.access_token
 + extra_options, true);
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         var userInfo = {
@@ -142,7 +142,7 @@ if ("PUT" == DOC_OP)  {
         var info;
         var xhr = new XMLHttpRequest();
         xhr.open("GET", SERVICE + "/docs/edge/documents/pushFlow-" + userName + 
-            "?access_token=" + access_token, false);
+            "?access_token=" + auth.access_token, false);
         xhr.send();
         try {
             info = JSON.parse(xhr.responseText)[0];
@@ -163,7 +163,7 @@ console.log("change from PUT to POST until Doc Service changed");
         var messages;
         var newMessages = [];
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", SERVICE + "/docs/edge/documents?access_token=" + access_token +
+        xhr.open("GET", SERVICE + "/docs/edge/documents?access_token=" + auth.access_token +
             "&query=" + 
             encodeURIComponent(JSON.stringify({
                type:"pushFlowMessage",
@@ -194,6 +194,7 @@ console.log(msgMessage + " " + msgTimestamp + "vs " + receivedMessage);
         return newMessages;
     }
 
+   var auth;
     function login()  {
         var username = document.getElementById('usernameField').value;
         var password = document.getElementById('passwordField').value;
@@ -204,7 +205,6 @@ console.log(msgMessage + " " + msgTimestamp + "vs " + receivedMessage);
         auth = bridgeit.login(username, password);
         bridgeit.usePushService();
         bridgeit.addPushListener(username, 'handlePush');
-        access_token = auth.access_token;
         cloudPushReady = true;
         auth.then(getInfo, function(){console.log("auth failed")});
     }
