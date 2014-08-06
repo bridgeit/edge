@@ -93,7 +93,7 @@ function initPage() {
             serviceBase:"http://dev.bridgeit.io"});
 
     $('#loginNavbar').click(login);
-    $('#logoutNavbar').click(logoutClick());
+    $('#logoutNavbar').click(logout);
 }
 
 </script>
@@ -211,6 +211,10 @@ function initPage() {
         bridgeit.addPushListener(
                 document.getElementById("pushGroup").value, 'handlePush');
         cloudPushReady = true;
+    }
+
+    function logout()  {
+        console.log("logout");
     }
 
     </script>
