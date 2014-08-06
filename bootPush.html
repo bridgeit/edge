@@ -146,6 +146,8 @@ function initPage() {
     var lastPushTimeStamp = 0;
     function handlePush()  {
         var now = new Date();
+        infoAlert("You were notified:< " + now);
+
         //an Ajax Push may be delivered but unacknowledged
         //leading to duplication http://jira.icesoft.org/browse/PUSH-301
         if (now.getTime() - lastPushTimeStamp < 600)  {
