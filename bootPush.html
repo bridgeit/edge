@@ -29,6 +29,10 @@
           <ul class="nav navbar-nav navbar-right">
             <li><span id="welcome" class="navbar-text"></span></li>
             <li><a id="cloudPushBtn" onclick="bridgeit.register('_reg', 'handlePush');"><i class="glyphicon glyphicon-cloud-download"></i> Cloud Push</a></li>
+            <li>
+                <a id="loginNavbar" data-toggle="modal" href="#loginModal"><i class="glyphicon glyphicon-lock"></i> Login</a>
+                <a id="logoutNavbar"><i class="glyphicon glyphicon-lock"></i> Logout</a>
+            </li>
           </ul>
         </div>
     </div><!-- /container -->
@@ -43,13 +47,9 @@
                 <li><a href="http://github.com/bridgeit/" title="BridgeIt GitHub" target="_blank">BridgeIt GitHub</a></li>
             </ul>
             <hr>
-            <div id="noticesPanel" class="panel panel-default">
-                <div class="panel-heading"><h4>Notices</h4></div>
-                <div id="alertDiv" class="panel-body"></div>
-            </div>
-        </div><!-- /col-3 -->
-    </div>
-</div>
+            <div id="inputPanel" class="panel panel-default">
+                <div class="panel-heading"><h4>Cloud Push</h4></div>
+                <div id="alertDiv" class="panel-body">
 
     <label for="pushGroup">Push Group: </label>
     <span><input type="text" style="width:180px" onchange="updateGroupName()" id="pushGroup"></span><br>
@@ -65,6 +65,18 @@
 
     <a id="pushBtn" type="button" class="btn"
         onclick="delayedPush();">Push in 10 seconds ...</a>
+
+
+                </div>
+            </div>
+            <div id="noticesPanel" class="panel panel-default">
+                <div class="panel-heading"><h4>Notices</h4></div>
+                <div id="alertDiv" class="panel-body"></div>
+            </div>
+        </div><!-- /col-3 -->
+    </div>
+</div>
+
 
     <fieldset>
         <div class="row"></div>
@@ -83,6 +95,7 @@ function initPage() {
             realm:"edge",
             serviceBase:"http://dev.bridgeit.io"});
 
+    $('#loginNavbar').click(login);
     $('#logoutNavbar').click(logoutClick());
 }
 
