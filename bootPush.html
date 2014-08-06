@@ -51,12 +51,159 @@
     </div>
 </div>
 
+    <label for="pushGroup">Push Group: </label>
+    <span><input type="text" style="width:180px" onchange="updateGroupName()" id="pushGroup"></span><br>
+
+    <label for="username">Username: </label>
+    <span><input type="text" style="width:180px" value="pushadmin" id="username" autocorrect="off" autocapitalize="off"></span><br>
+    <label for="password">Password: </label>
+    <span><input type="password" style="width:180px" value="ices0ft22" id="password"></span><br>
+    <span><input type="button" style="width:180px" onclick="login()" value="Login" id="loginButton"></span><br>
+
+    <a id="regBtn" type="button" class="btn"
+        onclick="bridgeit.register('_reg', 'handlePushRegistration');">Enable Cloud Push</a>
+
+    <a id="pushBtn" type="button" class="btn"
+        onclick="delayedPush();">Push in 10 seconds ...</a>
+
+    <fieldset>
+        <div class="row"></div>
+    </fieldset>
+    <fieldset id="notifications">
+    </fieldset>
+
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 <script type='text/javascript' src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 
 <script type='text/javascript'>
     $(document).ready(initPage);
+    
+function initPage() {
+    bridgeit.useServices({
+            realm:"edge",
+            serviceBase:"http://dev.bridgeit.io"});
+
+    $('#logoutNavbar').click(logoutClick());
+}
+
 </script>
+
+    <script type="text/javascript">
+    var PUSH_STORE_KEY = 'bridgeit.pushes';
+    restoreNotifications();
+
+    if (!document.getElementById("pushGroup").value)  {
+        document.getElementById("pushGroup").value = bridgeit.getId();
+    }
+
+    if (bridgeit.isRegistered())  {
+        document.getElementById('regBtn').style.display = 'none';
+    }
+
+    function updateGroupName()  {
+        bridgeit.addPushListener(
+                document.getElementById("pushGroup").value, 'handlePush');
+    }
+
+    function delayedPush()  {
+        bridgeit.push( document.getElementById("pushGroup").value,
+            {subject:'BridgeIt Cloud Push',
+            detail:'You have been notified.', delay:10000,
+            url: bridgeit.cloudPushReturnURL()} );
+        updatePushButtonText('Waiting for push...');
+    }
+
+    function handlePushRegistration(event)  {
+        console.log('handlePushRegistration() called, registered=' + bridgeit.isRegistered());
+        if (bridgeit.isRegistered())  {
+            document.getElementById('regBtn').style.display = 'none';
+        }
+    }
+
+    function restoreNotifications()  {
+        var storedPush = getStoredNotifications();
+        if (!storedPush)  {
+            return;
+        }
+        var outDiv = document.getElementById("notifications");
+        for (var i = 0 ; i < storedPush.length ; i++)  {
+            var row = document.createElement("div");
+            row.innerHTML = storedPush[i];
+            outDiv.insertBefore(row, outDiv.firstChild);
+        }
+    }
+
+    var lastPushTimeStamp = 0;
+    function handlePush()  {
+        var now = new Date();
+        //an Ajax Push may be delivered but unacknowledged
+        //leading to duplication http://jira.icesoft.org/browse/PUSH-301
+        if (now.getTime() - lastPushTimeStamp < 600)  {
+            console.log("Debouncing duplicate push: " + 
+                    (now.getTime() - lastPushTimeStamp));
+            return;
+        }
+        lastPushTimeStamp = now.getTime();
+        var outDiv = document.getElementById("notifications");
+        var row = document.createElement("div");
+        if (row.classList)
+            row.classList.add('hl');
+        outDiv.insertBefore(row, outDiv.firstChild);
+        var rowMarkup = "<b>You were notified:</b> " + new Date();
+        storeNotification(rowMarkup);
+        row.innerHTML = rowMarkup;
+        window.setTimeout(function() {
+            if (row.classList)
+                row.classList.remove('hl');
+        }, 3000);
+        updatePushButtonText('Push in 10 seconds ...');
+    }
+
+    function getStoredNotifications()  {
+        var storedPush = [];
+        if (localStorage) {
+            var serializedPush = localStorage[PUSH_STORE_KEY];
+            if (serializedPush)  {
+                storedPush = JSON.parse(serializedPush);
+            }
+            if (!storedPush) {
+                storedPush = [];
+            }
+        }
+        return storedPush;
+    }
+
+    function storeNotification(text)  {
+        if (localStorage) {
+            var storedPush = getStoredNotifications();
+            if (storedPush.length > 3)  {
+                //remove oldest entries, but keep 3
+                storedPush.splice(0, storedPush.length - 3);
+            }
+            storedPush.push(text);
+            localStorage[PUSH_STORE_KEY] = JSON.stringify(storedPush);
+        }
+    }
+
+    function updatePushButtonText(text){
+        document.getElementById('pushBtn').innerText = text;
+    }
+
+    function login()  {
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        
+        bridgeit.useServices({
+                realm:"edge",
+                serviceBase:"http://dev.bridgeit.io"});
+        window.bridgeitAuth = bridgeit.login(username, password);
+        bridgeit.usePushService();
+        bridgeit.addPushListener(
+                document.getElementById("pushGroup").value, 'handlePush');
+        cloudPushReady = true;
+    }
+
+    </script>
 
 </body>
 </html>
