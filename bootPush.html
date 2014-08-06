@@ -49,7 +49,7 @@
             <hr>
             <div id="inputPanel" class="panel panel-default">
                 <div class="panel-heading"><h4>Cloud Push</h4></div>
-                <div id="alertDiv" class="panel-body">
+                <div class="panel-body">
 
     <label for="pushGroup">Push Group: </label>
     <span><input type="text" style="width:180px" onchange="updateGroupName()" id="pushGroup"></span><br>
@@ -197,6 +197,21 @@ function initPage() {
 
     function updatePushButtonText(text){
         document.getElementById('pushBtn').innerText = text;
+    }
+
+    function infoAlert(message){
+        $('#alertDiv').prepend(
+            $('<div class="alert alert-info fade in"><button type="button" class="close" data-dismiss="alert" onclick="removeNoticesInfoClass();" aria-hidden="true">&times;</button><small>' + message + '</small></div>').hide().fadeIn('slow')
+        );
+        addNoticesInfoClass();
+    }
+
+    function addNoticesInfoClass(){
+        $('#noticesPanel').addClass('panel-info');
+    }
+
+    function removeNoticesInfoClass(){
+        $('#noticesPanel').removeClass('panel-info');
     }
 
     function login()  {
