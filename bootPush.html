@@ -14,5 +14,49 @@
     <script src="http://api.bridgeit.mobi/bridgeit/bridgeit.js"></script -->
 </head>
 <body>
+<div id="top-nav" class="navbar navbar-inverse navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          <h4 class="navbar-text">Bootstrap Push Demo</h4>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><span id="welcome" class="navbar-text"></span></li>
+            <li><a id="cloudPushBtn" onclick="bridgeit.register('_reg', 'handlePush');"><i class="glyphicon glyphicon-cloud-download"></i> Cloud Push</a></li>
+          </ul>
+        </div>
+    </div><!-- /container -->
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Left column -->
+            <ul class="nav nav-stacked">
+                <li class="active"><a href="http://bridgeit.mobi/" title="BridgeIt Website" target="_blank">BridgeIt Website</a></li>
+                <li><a href="http://github.com/bridgeit/" title="BridgeIt GitHub" target="_blank">BridgeIt GitHub</a></li>
+            </ul>
+            <hr>
+            <div id="noticesPanel" class="panel panel-default">
+                <div class="panel-heading"><h4>Notices</h4></div>
+                <div id="alertDiv" class="panel-body"></div>
+            </div>
+        </div><!-- /col-3 -->
+    </div>
+</div>
+
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type='text/javascript' src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+<script type='text/javascript'>
+    $(document).ready(initPage);
+</script>
+
 </body>
 </html>
