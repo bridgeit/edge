@@ -92,12 +92,14 @@
     $(document).ready(initPage);
     
 function initPage() {
+alert("initPage start");
     bridgeit.useServices({
             realm:"edge",
             serviceBase:"http://dev.bridgeit.io"});
 
     $('#loginNavbar').click(login);
     $('#logoutNavbar').click(logout);
+alert("initPage done");
 }
 
 </script>
