@@ -111,7 +111,7 @@ function initPage() {
     }
 
     if (bridgeit.isRegistered())  {
-        document.getElementById('regBtn').style.display = 'none';
+        $('#cloudPushBtn').addClass('.active');
     }
 
     function updateGroupName()  {
@@ -130,7 +130,7 @@ function initPage() {
     function handlePushRegistration(event)  {
         console.log('handlePushRegistration() called, registered=' + bridgeit.isRegistered());
         if (bridgeit.isRegistered())  {
-            document.getElementById('regBtn').style.display = 'none';
+            $('#cloudPushBtn').addClass('.active');
         }
     }
 
