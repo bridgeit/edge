@@ -50,19 +50,23 @@
             <div id="inputPanel" class="panel panel-default">
                 <div class="panel-heading"><h4>Cloud Push</h4></div>
                 <div class="panel-body">
+    <ul>
+        <label for="pushGroup">Push Group: </label>
+        <span><input type="text" style="width:180px" onchange="updateGroupName()" id="pushGroup"></span><br>
+    </ul>
 
-    <label for="pushGroup">Push Group: </label>
-    <span><input type="text" style="width:180px" onchange="updateGroupName()" id="pushGroup"></span><br>
+    <ul>
+        <label for="username">Username: </label>
+        <span><input type="text" style="width:180px" value="pushadmin" id="username" autocorrect="off" autocapitalize="off"></span><br>
+        <label for="password">Password: </label>
+        <span><input type="password" style="width:180px" value="ices0ft22" id="password"></span><br>
+        <span><input type="button" style="width:180px" onclick="login()" value="Login" id="loginButton"></span><br>
+    </ul>
 
-    <label for="username">Username: </label>
-    <span><input type="text" style="width:180px" value="pushadmin" id="username" autocorrect="off" autocapitalize="off"></span><br>
-    <label for="password">Password: </label>
-    <span><input type="password" style="width:180px" value="ices0ft22" id="password"></span><br>
-    <span><input type="button" style="width:180px" onclick="login()" value="Login" id="loginButton"></span><br>
-
-    <button id="pushBtn" type="button" style="width:180px" 
-        onclick="delayedPush();">Push in 10 seconds ...</button>
-
+    <ul>
+        <button id="pushBtn" type="button" style="width:180px" 
+            onclick="delayedPush();">Push in 10 seconds ...</button>
+    </ul>
 
                 </div>
             </div>
